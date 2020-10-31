@@ -1,0 +1,19 @@
+{% extends "base.j2" %}
+{% set page_title="Login Page" %}
+{% set page_description="Log in here to enjoy the wonders of The Great Football Pool" %}
+{% block content %}
+	<form action="{{ url_for('login') }}" method=POST>
+	<table>
+	<tr>
+	
+	<td align="right"><font class="descrip">Email:</font></td><td><input id="email" name="email" type="text" /></td>
+	</tr>
+	<tr>
+	<td align="right"><font class="descrip">Password:</font></td><td><input id="password" name="password" type="password" /></td>
+	</tr>
+	<tr>
+	<td></td>
+	<td align="left"><input name="commit" type="submit" value="Log In" /></td>
+	</tr>
+	</table>
+{% endblock %}

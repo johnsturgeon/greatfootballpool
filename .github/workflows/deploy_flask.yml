@@ -1,0 +1,124 @@
+name: Deploy Flask Site
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+    - name: Check code with flake8
+      run: |
+        flake8 --config .flake8 bin/*.py flask_site/include/*.py
+    - name: ShellCheck
+      run: |
+        shellcheck -x bin/*.sh
+  deploy:
+    name: Deploy to production
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: SSH - Create .env file
+      uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cat << EOF > ${{ secrets.PROD_WEB_SERVER_HOME }}/conf/.env
+          ${{ secrets.PROD_WEB_SERVER_DOT_ENV }}
+          EOF
+        host: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+
+    - name: SSH - Create settings.json file
+      uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cat << EOF > ${{ secrets.PROD_WEB_SERVER_HOME }}/conf/settings.json
+          ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+          EOF
+        host: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+
+    - name: Rsync over requirements file
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_WEB_SERVER_HOME }}/requirements.txt
+
+        VERBOSE: true
+        USER: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        ARGS: -avz --delete --exclude tmp --exclude public
+        SOURCE: ./requirements.txt
+
+    - name: SSH - Re-Create virtual environment
+      uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cd ${{ secrets.PROD_WEB_SERVER_HOME }}
+          rm -rf env
+          python3 -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          deactivate
+          rm requirements.txt
+        host: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+
+    - name: Rsync path file into site-packages
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_WEB_SERVER_HOME }}/tgfp_paths.pth
+
+        VERBOSE: true
+        USER: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./conf/tgfp_paths.pth
+
+    - name: SSH - Move *.pth file into production
+      uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cd ${{ secrets.PROD_WEB_SERVER_HOME }}
+          mv tgfp_paths.pth env/lib/python3.*/site-packages
+        host: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+
+    - name: Rsync flask site to production
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_WEB_SERVER_HOME }}/flask_site/
+
+        VERBOSE: true
+        USER: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./flask_site/
+        POST_SCRIPT: |
+          echo Restarting Passenger
+          touch ${{ secrets.PROD_WEB_SERVER_HOME }}/flask_site/tmp/restart.txt

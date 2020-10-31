@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/local/sbin</string>
+	</dict>
+	<key>KeepAlive</key>
+	<dict>
+		<key>SuccessfulExit</key>
+		<true/>
+	</dict>
+	<key>Label</key>
+	<string>TGFP Discord Bot</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>env/bin/python</string>
+		<string>bin/discord_bot_service.py</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>**LOGGING_DIR**/discord_bot_service.launchd.log</string>
+	<key>StandardOutPath</key>
+	<string>**LOGGING_DIR**/discord_bot_service.launchd.log</string>
+	<key>WorkingDirectory</key>
+	<string>**WORKING_DIR**</string>
+</dict>
+</plist>

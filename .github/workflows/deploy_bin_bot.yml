@@ -1,0 +1,131 @@
+name: Deploy Bot Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+    - name: Check code with flake8
+      run: |
+        flake8 --config .flake8 bin/*.py flask_site/include/*.py
+    - name: ShellCheck
+      run: |
+        shellcheck -x bin/*.sh
+  deploy:
+    name: Deploy bin / bot
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Create .env file
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
+        script: |
+          mkdir ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/
+          cat << EOF > ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/.env
+          ${{ secrets.PROD_WEB_SERVER_DOT_ENV }}
+          EOF
+
+    - name: Create settings.json file
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
+        script: |
+          mkdir ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/
+          cat << EOF > ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/settings.json
+          ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+          EOF
+
+    - name: Rsync over requirements file
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_BOT_SERVER_HOME }}/requirements.txt
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz --delete
+        SOURCE: ./requirements.txt
+
+    - name: Re-Create virtual environment
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
+        script: |
+          cd ${{ secrets.PROD_BOT_SERVER_HOME }}
+          rm -rf env
+          python3 -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          deactivate
+          rm requirements.txt
+
+    - name: Rsync path file into site-packages
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_BOT_SERVER_HOME }}/tgfp_paths.pth
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./conf/tgfp_paths.pth
+
+    - name: Move *.pth file into production
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
+        script: |
+          cd ${{ secrets.PROD_BOT_SERVER_HOME }}
+          mv tgfp_paths.pth env/lib/python3.*/site-packages
+
+    - name: Rsync flask site to production
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_BOT_SERVER_HOME }}/flask_site/
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./flask_site/
+
+    - name: Rsync bin production
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_BOT_SERVER_HOME }}/bin/
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./bin/

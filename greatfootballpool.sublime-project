@@ -1,0 +1,32 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": ["env"]
+		}
+	],
+	"settings": {
+		// set project root path for OpenContextPath
+	    "open_context_path": {
+	        "directories": ["."],
+	    },
+		"python_virtualenv": "$project_path/env",
+		"SublimeLinter.linters.pylint.python": "${project_path}/env/bin/python",
+		"SublimeLinter.linters.flake8.executable": "${project_path}/env/bin/flake8",
+		"SublimeLinter.linters.flake8.args": [
+			"--config", "${project_path}/.flake8"
+		],
+		"SublimeLinter.linters.shellcheck.executable": "${project_path}/env/bin/shellcheck",
+		"SublimeLinter.linters.shellcheck.args": [
+			"-x"
+		],
+		"SublimeLinter.linters.pydocstyle.executable": "${project_path}/env/bin/pydocstyle",
+		"sublime_completions_visibility": "jedi",
+		"auto_complete_function_params": "required"
+
+    },
+    "python_package_paths": [
+    		"$project_path/env/lib/python3.7/site-packages"
+    ]
+}
