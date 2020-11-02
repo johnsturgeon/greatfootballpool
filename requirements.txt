@@ -40,7 +40,7 @@ raven==6.10.0
 sentry-sdk==0.19.1
 shellcheck-py==0.7.1.1
 six==1.15.0
-toml==0.10.1
+toml==0.10.2
 typed-ast==1.4.1
 typing-extensions==3.7.4.3
 urllib3==1.25.11
