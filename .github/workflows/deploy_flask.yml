@@ -45,7 +45,7 @@ jobs:
           EOF
         host: ${{ secrets.PROD_WEB_SERVER_HOST }}
         user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
-        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        pass: ${{ secrets.PROD_WEB_SERVER_PASSWORD }}
 
     - name: SSH - Create settings.json file
       uses: fifsky/ssh-action@master
@@ -56,7 +56,7 @@ jobs:
           EOF
         host: ${{ secrets.PROD_WEB_SERVER_HOST }}
         user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
-        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        pass: ${{ secrets.PROD_WEB_SERVER_PASSWORD }}
 
     - name: Rsync over requirements file
       uses: up9cloud/action-rsync@master
@@ -84,7 +84,7 @@ jobs:
           rm requirements.txt
         host: ${{ secrets.PROD_WEB_SERVER_HOST }}
         user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
-        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        pass: ${{ secrets.PROD_WEB_SERVER_PASSWORD }}
 
     - name: Rsync path file into site-packages
       uses: up9cloud/action-rsync@master
@@ -106,7 +106,7 @@ jobs:
           mv tgfp_paths.pth env/lib/python3.*/site-packages
         host: ${{ secrets.PROD_WEB_SERVER_HOST }}
         user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
-        key: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        pass: ${{ secrets.PROD_WEB_SERVER_PASSWORD }}
 
     - name: Rsync flask site to production
       uses: up9cloud/action-rsync@master
