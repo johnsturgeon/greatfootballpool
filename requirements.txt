@@ -37,7 +37,7 @@ python-dateutil==2.8.1
 python-dotenv==0.15.0
 pytz==2020.4
 raven==6.10.0
-sentry-sdk==0.19.2
+sentry-sdk==0.19.3
 shellcheck-py==0.7.1.1
 six==1.15.0
 toml==0.10.2
