@@ -14,7 +14,7 @@ client = discord.Client()
 
 
 class MessageData():
-    """ This class will contain all the data necessesary to send the message """
+    """ This class will contain all the data necessary to send the message """
     # pylint: disable=too-few-public-methods
     # pylint: disable=missing-function-docstring
     def __init__(self):
