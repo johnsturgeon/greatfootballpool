@@ -11,7 +11,7 @@ echo "=============================================="
 date
 echo "=============================================="
 echo "Backing up mongo DB"
-bin/mongo_backup.sh
+bin/mongo_backup.py
 echo "Updating scores..."
 env/bin/python bin/tgfp_update_scores.py
 echo "Updating win/loss..."

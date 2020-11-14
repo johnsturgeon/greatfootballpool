@@ -1,0 +1,26 @@
+#!../env/bin/python
+""" This script will back up the mongo database to a folder in the settings """
+import subprocess
+from subprocess import check_output, CalledProcessError
+from get_settings import settings
+
+
+def main():
+    """ Backs up the mongo db """
+    mongo_settings = settings()['mongo']
+    dump_folder = mongo_settings['backup_folder']
+    admin_passwd = mongo_settings['admin_password']
+    try:
+        output = check_output(['/usr/local/bin/mongodump', '-u', 'admin',
+                               '-p', admin_passwd, '--authenticationDatabase=admin', '-d', 'tgfp',
+                               '-o', dump_folder
+                               ], stderr=subprocess.STDOUT).decode("utf-8")
+    except CalledProcessError as err:
+        raise RuntimeError('Could not back up Mongo DB') from err
+
+    if 'done dumping' not in output:
+        raise RuntimeError('Mongo DB not backed up')
+
+
+if __name__ == "__main__":
+    main()

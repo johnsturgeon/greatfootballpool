@@ -4,37 +4,28 @@ This is a Python/Flask web site that is for running a friendly 'pick the winner'
 
 
 # TGFP Readme
-## Prerequisites (dev and prod)
+
+Notes: README is divided up into two parts, one for development, and the other for maintenance and depoloyment to production.
+
+# Development
+
+## Prerequisites
 * python 3.6 or above
 * Discord Server for bots
 * Healthchecks.io account
 * Sentry.io account
+* `sentry-cli` https://docs.sentry.io/product/cli/
 * MongoDB
-* jq
+* `jq` https://stedolan.github.io/jq/download/
 
-## Setting up sentry-cli
-TODO: I need to add instructions for how to set up sentry-cli here.
-## install jq
 
-## Deployment
-**There are three types of deployment**
-1. Production Web Server
-2. Production Discord Bot
-3. Full Stack Development (both web server and discord bot configured for production environment)
-
-### Production Web Server
-> NOTES:   
-> Github will deploy to the production web server whenever there is a push to ‘head’ branch.  The configuration for deployment is taken from GitHub secrets.  Deployment can also be done via a script from the ‘bin’ folder (`deploy_web_server.sh`)  
-### Production Discord Bot
-> NOTES:  
-> Github will deploy to the production web server whenever there is a push to ‘head’ branch.  The configuration for deployment is taken from GitHub secrets.  Deployment can also be done via a script from the ‘bin’ folder (`deploy_discord_bot.sh`)  
 ### Full Stack Development
 NOTES:
 Full stack development can be deployed by following these steps:
 
 1. Clone this repo
 `git clone git@github.com:johnsturgeon/greatfootballpool.git`
-2. Run the setup script
+2. Run the `bin/setup.py` script
 > NOTES:  
 > You can review the contents of conf/template.env to determine the variables you will be prompted for  
 
@@ -67,4 +58,12 @@ Deployment happens on any PR that gets pushed to 'head'
 see https://flask.palletsprojects.com/en/1.1.x/quickstart/ for generating a good secret key
 quick: use: python -c 'import os; print(os.urandom(16))'
 
+# Production
+
+### Production Web Server
+> NOTES:   
+> Github will deploy to the production web server whenever there is a push to ‘head’ branch.  The configuration for deployment is taken from GitHub secrets.  Deployment can also be done via a script from the ‘bin’ folder (`deploy_web_server.sh`)  
+### Production Discord Bot
+> NOTES:  
+> Github will deploy to the production web server whenever there is a push to ‘head’ branch.  The configuration for deployment is taken from GitHub secrets.  Deployment can also be done via a script from the ‘bin’ folder (`deploy_discord_bot.sh`)  
 
