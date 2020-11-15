@@ -18,7 +18,7 @@ jobs:
         pip install -r requirements.txt
     - name: Copy path file
       run: |
-        cp conf/tgfp_paths.pth env/lib/python3.*/site-packages
+        cp conf/tgfp_paths.pth lib/python3.*/site-packages
     - name: Install config file
       run: |
         cat << EOF > ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/settings.json
