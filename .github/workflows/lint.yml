@@ -28,4 +28,4 @@ jobs:
         shellcheck -x flask_site/run.sh
     - name: Unit Tests
       run: |
-        pytest -s tests/test_mongo_backup.py
+        pytest --ignore=tests/test_mongo_backup.py
