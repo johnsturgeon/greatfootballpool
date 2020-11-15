@@ -19,12 +19,12 @@ jobs:
     - name: Install config file
       run: |
         pwd
-        ls -ld ${{ github.workspace }}
+        ls -ld ${{ github.workspace }}/*
         echo ${{ github.workspace }}
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
-    - name: Test with pytest
+    - name: Lint with pylint
       run: |
         pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
     - name: Check code with flake8
