@@ -16,6 +16,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Copy path file
+      run: |
+        cp conf/tgfp_paths.pth env/lib/python3.*/site-packages
+    - name: Install config file
+      run: |
+        cat << EOF > ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/settings.json
+        ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+        EOF
     - name: Test with pytest
       run: |
         pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
@@ -29,5 +37,3 @@ jobs:
     - name: Unit Tests
       run: |
         python -m pytest --ignore=tests/test_mongo_backup.py
-      env:
-        PYTHONPATH: bin/
