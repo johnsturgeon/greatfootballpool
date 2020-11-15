@@ -18,9 +18,6 @@ jobs:
         pip install -r requirements.txt
     - name: Install config file
       run: |
-        pwd
-        ls -ld ${{ github.workspace }}/*
-        echo ${{ github.workspace }}
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
