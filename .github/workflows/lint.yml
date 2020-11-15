@@ -18,7 +18,10 @@ jobs:
         pip install -r requirements.txt
     - name: Install config file
       run: |
-        cat << EOF > ${{ secrets.PROD_BOT_SERVER_HOME }}/conf/settings.json
+        pwd
+        ls -ld ${{ github.workspace }}
+        echo ${{ github.workspace }}
+        cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
     - name: Test with pytest
@@ -35,4 +38,4 @@ jobs:
       run: |
         python -m pytest --ignore=tests/test_mongo_backup.py
       env:
-        PYTHONPATH: bin/
+        PYTHONPATH: ${{ github.workspace }}/bin
