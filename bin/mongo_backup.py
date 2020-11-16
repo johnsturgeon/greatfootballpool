@@ -1,8 +1,14 @@
-#!../env/bin/python
+#!/usr/bin/python3
 """ This script will back up the mongo database to a folder in the settings """
+import os
+import sys
 import subprocess
 from subprocess import check_output, CalledProcessError
 from get_settings import settings
+dirname = os.path.dirname(os.path.abspath(__file__))
+INTERP = os.path.normpath(os.path.join(dirname, '../env/bin/python'))
+if sys.executable != INTERP:
+    os.execl(INTERP, INTERP, *sys.argv)
 
 
 def main():
