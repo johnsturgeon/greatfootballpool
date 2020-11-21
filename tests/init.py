@@ -19,8 +19,11 @@ def reload_interp():
     Return:
         returns the interpreter for the 'healthchecks' folder.
     """
+    print("reloading interpreter")
     dirname = os.path.dirname(os.path.abspath(__file__))
     new_interp = os.path.normpath(os.path.join(dirname, RELATIVE_INTERP_LOC))
+    print("OLD: " + sys.executable)
+    print("NEW: " + new_interp)
     if sys.executable != new_interp:
         os.execl(new_interp, new_interp, *sys.argv)
 
