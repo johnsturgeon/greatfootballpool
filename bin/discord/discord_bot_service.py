@@ -106,7 +106,7 @@ def this_week(message) -> str:
     players = tgfp.find_players(discord_id=message.author.id)
     if players:
         player = players[0]
-    elif message.author.id == WEBHOOK_BOT_ID:
+    elif message.author.id == WEBHOOK_BOT_ID or message.author.id == 779383858096242718:
         player = tgfp.find_players(player_email=ADMIN_EMAIL)[0]
 
     logging.info("%s just asked for !TGFP This Week", player.nick_name)
