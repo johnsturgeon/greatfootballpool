@@ -1,12 +1,10 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 """Discord bot runs in the background and handles all requests to discord."""
-import urllib.request
-import socket
 from init import get_settings
-
 settings = get_settings()
-
 # pylint: disable=wrong-import-position
+import urllib.request  # noqa: E402
+import socket  # noqa: E402
 import sentry_sdk  # noqa: E402
 from sentry_sdk import capture_exception, capture_message  # noqa: E402
 SENTRY_DSN = settings['config']['sentry_dsn']

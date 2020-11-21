@@ -1,9 +1,12 @@
-#!../env/bin/python
+#!/usr/bin/env python
 """ This file will update all the scores in the mongo DB for the great football pool """
 import pprint
-import bot_sender
-from yahoo import Yahoo
-from tgfp import TGFP
+import init
+settings = init.get_settings()
+# pylint: disable=wrong-import-position
+# import bot_sender  # noqa E402
+from yahoo import Yahoo  # noqa E402
+from tgfp import TGFP  # noqa E402
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -38,7 +41,7 @@ def main():
                     tgfp_g.save()
                     if yahoo_g.score_is_final:
                         print("Sending alert")
-                        bot_sender.alert_game_id_final(tgfp_g.id)
+                        # bot_sender.alert_game_id_final(tgfp_g.id)
 
         if not yahoo_g.score_is_final:
             all_games_are_final = False

@@ -1,5 +1,5 @@
 #!../env/bin/python
-""" Unit Tests for get_settings.py """
+"""Unit Tests for get_settings.py"""
 from get_settings import settings
 
 

@@ -1,5 +1,5 @@
 #!../env/bin/python
-""" Discord bot runs in the background and handles all requests to discord """
+"""Discord bot runs in the background and handles all requests to discord."""
 import os
 import logging
 import json
@@ -14,7 +14,8 @@ client = discord.Client()
 
 
 class MessageData():
-    """ This class will contain all the data necessary to send the message """
+    """This class will contain all the data necessary to send the message."""
+
     # pylint: disable=too-few-public-methods
     # pylint: disable=missing-function-docstring
     def __init__(self):
@@ -63,8 +64,8 @@ def embed_game_alert():
 
     embed = discord.Embed(
         title="GAME ALERT",
-        description=f"{winning_team.full_name} have defeated the {losing_team.full_name}" +
-        f" by a score of {game.winning_team_score} - {game.losing_team_score}",
+        description=f'''{winning_team.full_name} have defeated the {losing_team.full_name}
+ by a score of {game.winning_team_score} - {game.losing_team_score}''',
         color=0x00ff00)
     embed.set_thumbnail(url=winning_team.logo_url)
     embed.add_field(name="Winners", value=winning_players_string, inline=True)
