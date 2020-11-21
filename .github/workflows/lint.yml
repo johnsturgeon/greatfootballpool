@@ -26,18 +26,28 @@ jobs:
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
+      env:
+        pythonLocation: ${{ github.workspace }}/env
     - name: Lint with pylint
       run: |
         which python
         python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+      env:
+        pythonLocation: ${{ github.workspace }}/env
     - name: Check code with flake8
       run: |
         python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
+      env:
+        pythonLocation: ${{ github.workspace }}/env
     - name: ShellCheck
       run: |
         shellcheck -x bin/*.sh
         shellcheck -x flask_site/run.sh
+      env:
+        pythonLocation: ${{ github.workspace }}/env
     - name: Unit Tests
       run: |
         python -m pytest --ignore=tests/test_mongo_backup.py
+      env:
+        pythonLocation: ${{ github.workspace }}/env
 
