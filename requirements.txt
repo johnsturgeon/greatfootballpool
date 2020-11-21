@@ -48,7 +48,6 @@ pytz==2020.4
 raven==6.10.0
 rope==0.18.0
 sentry-sdk==0.19.4
-shellcheck-py==0.7.1.1
 six==1.15.0
 snowballstemmer==2.0.0
 toml==0.10.2

@@ -26,15 +26,10 @@ jobs:
         EOF
     - name: Lint with pylint
       run: |
-        which python
         env/bin/python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
     - name: Check code with flake8
       run: |
         env/bin/python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
-    - name: ShellCheck
-      run: |
-        shellcheck -x bin/*.sh
-        shellcheck -x flask_site/run.sh
     - name: Unit Tests
       run: |
         env/bin/python -m pytest --ignore=tests/test_mongo_backup.py
