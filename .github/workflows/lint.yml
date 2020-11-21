@@ -19,6 +19,8 @@ jobs:
         source env/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+      env:
+        pythonLocation: ${{ github.workspace }}/env
     - name: Install config file
       run: |
         cat << EOF > ${{ github.workspace }}/conf/settings.json
@@ -38,3 +40,4 @@ jobs:
     - name: Unit Tests
       run: |
         python -m pytest --ignore=tests/test_mongo_backup.py
+
