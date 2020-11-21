@@ -3,17 +3,16 @@
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
-
 import discord  # noqa E402
 from discord import Guild  # noqa W291
 
 client = discord.Client()
-TOKEN = settings['discord_bot']['token']
+TOKEN = settings['discord']['token']
 
 
 @client.event
 async def on_ready():
-    guild_name = settings['discord_bot']['guild']
+    guild_name = settings['discord']['guild']
     guild: Guild
     for guild in client.guilds:
         if guild.name == guild_name:

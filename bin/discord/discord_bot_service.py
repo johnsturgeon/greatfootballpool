@@ -1,21 +1,18 @@
-#!../env/bin/python
-""" Discord bot runs in the background and handles all requests to discord """
-import os
-import logging
-import json
-from tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer
-import discord
+#!/usr/bin/env python
+"""Discord bot runs in the background and handles all requests to discord."""
+from init import get_settings
+settings = get_settings()
+# pylint: disable=wrong-import-position
+import logging  # noqa E402
+from tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer  # noqa E402
+import discord  # noqa E402
 
-dirname = os.path.dirname(os.path.abspath(__file__))
-conf_path = os.path.normpath(os.path.join(dirname, '../conf/settings.json'))
-with open(conf_path) as config_file:
-    settings = json.load(config_file)
-
-TOKEN = settings['discord_bot']['token']
-GUILD = settings['discord_bot']['guild']
+TOKEN = settings['discord']['token']
+GUILD = settings['discord']['guild']
 LOG_DIR = settings['config']['log_dir']
-WEBHOOK_BOT_ID = settings['discord_bot']['webhook_bot_id']
-ADMIN_EMAIL = settings['discord_bot']['admin_email']
+WEBHOOK_BOT_ID = settings['discord']['webhook_bot_id']
+ADMIN_EMAIL = settings['discord']['admin_email']
+TEST_BOT_ID = settings['discord']['test_bot_user_id']
 
 client = discord.Client()
 tgfp = TGFP()
@@ -106,7 +103,7 @@ def this_week(message) -> str:
     players = tgfp.find_players(discord_id=message.author.id)
     if players:
         player = players[0]
-    elif message.author.id == WEBHOOK_BOT_ID or message.author.id == 779383858096242718:
+    elif message.author.id == WEBHOOK_BOT_ID or message.author.id == TEST_BOT_ID:
         player = tgfp.find_players(player_email=ADMIN_EMAIL)[0]
 
     logging.info("%s just asked for !TGFP This Week", player.nick_name)
@@ -127,7 +124,7 @@ def this_week(message) -> str:
 
         for game in games:
             road, home, pick, winner, road_score, home_score, icon = \
-                  game_line_for_game(game, player_pick)
+                game_line_for_game(game, player_pick)
             output += f"{icon} {road:>3} @ {home:>3} | {pick:>3}"
             if winner:
                 output += f" | {winner:<3} ({road_score}-{home_score})"
@@ -164,7 +161,7 @@ async def on_ready():
         {client.user},
         {guild.name},
         {guild.id}
-        )
+    )
     members = ""
     for member in guild.members:
         members += "\n -" + member.display_name + " : " + str(member.id)
