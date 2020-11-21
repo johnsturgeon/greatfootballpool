@@ -25,8 +25,8 @@ Jinja2==2.11.2
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
-mongoengine==0.20.0
-multidict==4.7.6
+mongoengine==0.21.0
+multidict==5.0.2
 packaging==20.4
 parso==0.7.1
 pluggy==0.13.1
@@ -47,7 +47,7 @@ python-language-server==0.36.1
 pytz==2020.4
 raven==6.10.0
 rope==0.18.0
-sentry-sdk==0.19.2
+sentry-sdk==0.19.4
 shellcheck-py==0.7.1.1
 six==1.15.0
 snowballstemmer==2.0.0
