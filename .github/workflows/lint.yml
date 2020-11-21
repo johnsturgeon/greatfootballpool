@@ -33,6 +33,5 @@ jobs:
         shellcheck -x flask_site/run.sh
     - name: Unit Tests
       run: |
-        python -m pytest --ignore=tests/test_mongo_backup.py
-      env:
-        PYTHONPATH: ${{ github.workspace }}/bin
+        which python
+        python pytest --ignore=tests/test_mongo_backup.py
