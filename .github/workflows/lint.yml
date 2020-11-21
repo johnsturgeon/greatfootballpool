@@ -38,4 +38,6 @@ jobs:
     - name: Unit Tests
       run: |
         env/bin/python -m pytest --ignore=tests/test_mongo_backup.py
+      env:
+        PYTHONPATH: ${{ github.workspace }}/bin:${{ github.workspace }}/bin/discord:${{ github.workspace }}/bin/healthchecks
 
