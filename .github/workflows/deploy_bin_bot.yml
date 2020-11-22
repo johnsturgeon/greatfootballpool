@@ -77,9 +77,8 @@ jobs:
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         after_script: |
           set -xv
-          whoami
+          eval "$(pyenv init -)"
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
-          pwd
           which python
           python -m venv env
           ls -l *
