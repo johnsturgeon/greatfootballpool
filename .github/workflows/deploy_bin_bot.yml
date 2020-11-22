@@ -82,6 +82,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           deactivate
+          rm requirements.txt
 
     - name: Rsync path file into site-packages
       uses: up9cloud/action-rsync@master
@@ -102,7 +103,7 @@ jobs:
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         script: |
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
-          cp tgfp_paths.pth env/lib/python3.*/site-packages
+          mv tgfp_paths.pth env/lib/python3.*/site-packages
 
     - name: Rsync flask site to bin_bot production
       uses: up9cloud/action-rsync@master
