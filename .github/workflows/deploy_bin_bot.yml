@@ -85,7 +85,6 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           deactivate
-          rm requirements.txt
 
     - name: Rsync path file into site-packages
       uses: up9cloud/action-rsync@master
