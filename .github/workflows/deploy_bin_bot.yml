@@ -77,7 +77,7 @@ jobs:
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         after_script: |
           set -xv
-          eval "$(pyenv init -)"
+          source ~/.zshrc
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
           which python
           python -m venv env
