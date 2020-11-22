@@ -76,6 +76,7 @@ jobs:
         username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         script: |
+          /bin/bash
           set -xv
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
           rm -rf env
@@ -97,7 +98,7 @@ jobs:
         ARGS: -avz
         SOURCE: ./conf/tgfp_paths.pth
 
-    - name: Move *.pth file into production
+    - name: Move *.pth file into bin_bot production
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.PROD_BOT_SERVER_HOST }}
@@ -107,7 +108,7 @@ jobs:
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
           mv tgfp_paths.pth env/lib/python3.*/site-packages
 
-    - name: Rsync flask site to production
+    - name: Rsync flask site to bin_bot production
       uses: up9cloud/action-rsync@master
       env:
         HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
@@ -118,7 +119,7 @@ jobs:
         ARGS: -avz
         SOURCE: ./flask_site/
 
-    - name: Rsync bin production
+    - name: Rsync bin to bin_bot production
       uses: up9cloud/action-rsync@master
       env:
         HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
