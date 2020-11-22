@@ -69,17 +69,15 @@ jobs:
         ARGS: -avz
         SOURCE: ./requirements.txt
 
-    - name: Re-Create virtual environment
-      uses: appleboy/ssh-action@master
+    - name: SSH Server Deploy
+      uses: kostya-ten/ssh-server-deploy@v3
       with:
         host: ${{ secrets.PROD_BOT_SERVER_HOST }}
         username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
-        script: |
-          /bin/bash
-          set -xv
+        after_script: |
+          whoami
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
-          rm -rf env
           python3 -m venv env
           source env/bin/activate
           pip install --upgrade pip
@@ -105,7 +103,7 @@ jobs:
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         script: |
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
-          mv tgfp_paths.pth env/lib/python3.*/site-packages
+          cp tgfp_paths.pth env/lib/python3.*/site-packages
 
     - name: Rsync flask site to bin_bot production
       uses: up9cloud/action-rsync@master
