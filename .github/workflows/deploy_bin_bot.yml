@@ -76,10 +76,15 @@ jobs:
         username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         after_script: |
+          set -xv
           whoami
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
+          pwd
+          which python3
           python3 -m venv env
+          ls -l *
           source env/bin/activate
+          which python
           pip install --upgrade pip
           pip install -r requirements.txt
           deactivate
