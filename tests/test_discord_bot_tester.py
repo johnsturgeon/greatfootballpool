@@ -20,8 +20,8 @@ def test_hearbeat(bash):
     assert 'CLI' in bash.run_script_inline([get_command('test_heartbeat')])
 
 
-# def test_this_week(bash):
-#     assert 'CLI' in bash.run_script_inline([get_command('test_this_week')])
+def test_this_week(bash):
+    assert 'CLI' in bash.run_script_inline([get_command('test_this_week')])
 
 
 def test_standings(bash):
