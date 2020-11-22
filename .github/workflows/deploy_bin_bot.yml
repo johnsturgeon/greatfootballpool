@@ -77,11 +77,8 @@ jobs:
         password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
         after_script: |
           set -xv
-          source ~/.zshrc
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
-          which python
-          python -m venv env
-          ls -l *
+          /usr/local/bin/python3 -m venv env
           source env/bin/activate
           which python
           pip install --upgrade pip
