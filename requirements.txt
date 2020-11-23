@@ -22,6 +22,7 @@ isort==5.6.4
 itsdangerous==1.1.0
 jedi==0.17.2
 Jinja2==2.11.2
+launchctl==0.0.0
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
@@ -48,6 +49,7 @@ pytz==2020.4
 raven==6.10.0
 rope==0.18.0
 sentry-sdk==0.19.4
+shellcheck-py==0.7.1.1
 six==1.15.0
 snowballstemmer==2.0.0
 toml==0.10.2
@@ -55,6 +57,7 @@ typed-ast==1.4.1
 typing-extensions==3.7.4.3
 ujson==4.0.1
 urllib3==1.25.11
+values==0.0.0
 Werkzeug==1.0.1
 wrapt==1.12.1
 yapf==0.30.0

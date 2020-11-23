@@ -3,19 +3,15 @@
 from yahoo import Yahoo
 from tgfp import TGFP
 
-tgfp = TGFP()
-yahoo = Yahoo(tgfp.current_week())
-
-mongo_games = tgfp.games()
-last_week = tgfp.last_week_completed()
-current_week = tgfp.current_week()
-final_games = tgfp.find_games(game_status="final")
-active_players = tgfp.find_players(player_active=True)
-mongo_picks = tgfp.picks()
-
 
 def main():
     """ Main function for running the entire file """
+    tgfp = TGFP()
+    yahoo = Yahoo(tgfp.current_week())
+
+    last_week = tgfp.last_week_completed()
+    active_players = tgfp.find_players(player_active=True)
+
     for player in active_players:
         print("Working on %s" % player.nick_name)
         picks = tgfp.find_picks(player_id=player.id)

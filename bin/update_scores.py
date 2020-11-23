@@ -4,23 +4,17 @@ import pprint
 import init
 settings = init.get_settings()
 # pylint: disable=wrong-import-position
-# import bot_sender  # noqa E402
 from yahoo import Yahoo  # noqa E402
 from tgfp import TGFP  # noqa E402
-
-pp = pprint.PrettyPrinter(indent=4)
-
-tgfp = TGFP()
-tgfp_teams = tgfp.teams()
-tgfp_games = tgfp.games()
-week_no = tgfp.current_week()
-
-yahoo = Yahoo(week_no=week_no)
-yahoo_games = yahoo.games()
 
 
 def main():
     """ This is the function runs the entire module. """
+    pp = pprint.PrettyPrinter(indent=4)
+    tgfp = TGFP()
+    week_no = tgfp.current_week()
+    yahoo = Yahoo(week_no=week_no)
+    yahoo_games = yahoo.games()
     all_games_are_final = True
 
     for yahoo_g in yahoo_games:
