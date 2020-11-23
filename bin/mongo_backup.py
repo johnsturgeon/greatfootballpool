@@ -1,20 +1,15 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 """ This script will back up the mongo database to a folder in the settings """
-import os
-import sys
-import subprocess
-from subprocess import check_output, CalledProcessError
-from get_settings import settings
-dirname = os.path.dirname(os.path.abspath(__file__))
-INTERP = os.path.normpath(os.path.join(dirname, '../env/bin/python'))
-if sys.executable != INTERP:
-    os.execl(INTERP, INTERP, *sys.argv)
+from init import get_settings
+settings = get_settings()
+# pylint: disable=wrong-import-position
+import subprocess  # noqa: E402
+from subprocess import check_output, CalledProcessError  # noqa: E402
 
 
-# TODO: Rewrite this file to use the common header
 def main():
     """ Backs up the mongo db """
-    mongo_settings = settings()['mongo']
+    mongo_settings = settings['mongo']
     dump_folder = mongo_settings['backup_folder']
     admin_passwd = mongo_settings['admin_password']
     try:
