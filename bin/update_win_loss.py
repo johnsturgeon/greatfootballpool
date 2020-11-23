@@ -3,6 +3,7 @@
 from yahoo import Yahoo
 from tgfp import TGFP
 
+# TODO: Modernize this file
 
 def main():
     """ Main function for running the entire file """

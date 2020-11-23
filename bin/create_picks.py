@@ -1,5 +1,6 @@
 #!../env/bin/python
 """ Used to create the picks page """
+# TODO: Modernize this file
 import pprint
 from yahoo import Yahoo
 from tgfp import TGFP, TGFPGame
