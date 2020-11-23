@@ -1,4 +1,5 @@
 #!../env/bin/python
+# TODO: Rewrite this so that it uses the new shebang
 """ This script will create the launchd plist for the bot, and run it """
 import plistlib
 import os
@@ -14,6 +15,8 @@ with open(conf_path) as config_file:
 
 os.chdir(dirname)
 
+
+# TODO: Rewrite this to use the new settings header
 # initialize the variables
 HOME_DIR = expanduser("~")
 PLIST_FILENAME = "TGFP Discord Bot.plist"

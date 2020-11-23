@@ -10,6 +10,7 @@ client = discord.Client()
 TOKEN = settings['discord']['token']
 
 
+# TODO: Fix the bot_sender to actually send game alerts
 @client.event
 async def on_ready():
     guild_name = settings['discord']['guild']

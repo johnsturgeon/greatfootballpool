@@ -1,4 +1,5 @@
 #!../env/bin/python
+# TODO: Fix this to use the new shebang
 """Discord bot runs in the background and handles all requests to discord."""
 import os
 import logging
@@ -11,6 +12,8 @@ from discord import Guild
 # GUILD = os.getenv('DISCORD_DEV_GUILD')
 
 client = discord.Client()
+
+# TODO: replace this with `bot_send`
 
 
 class MessageData():
