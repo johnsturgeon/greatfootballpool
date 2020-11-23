@@ -11,6 +11,7 @@ if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
 
 
+# TODO: Rewrite this file to use the common header
 def main():
     """ Backs up the mongo db """
     mongo_settings = settings()['mongo']
