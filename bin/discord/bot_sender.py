@@ -1,5 +1,4 @@
 #!../env/bin/python
-# TODO: Fix this to use the new shebang
 """Discord bot runs in the background and handles all requests to discord."""
 import os
 import logging
@@ -8,7 +7,6 @@ from tgfp import TGFP
 import discord
 from discord import Guild
 
-# TODO: Rewrite the bot_sender to run in 'development' mode
 # GUILD = os.getenv('DISCORD_DEV_GUILD')
 
 client = discord.Client()
