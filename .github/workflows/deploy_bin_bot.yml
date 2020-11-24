@@ -69,7 +69,7 @@ jobs:
         ARGS: -avz
         SOURCE: ./requirements.txt
 
-    - name: SSH Server Deploy
+    - name: Create the virtual ENV on the bot server
       uses: kostya-ten/ssh-server-deploy@v3
       with:
         host: ${{ secrets.PROD_BOT_SERVER_HOST }}

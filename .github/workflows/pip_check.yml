@@ -1,0 +1,55 @@
+name: Lint Only
+
+on:
+  workflow_dispatch:
+    
+jobs:
+  build:
+    name: Pip Dependancy Check (macOS)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        cd ${{ github.workspace }}
+        python -m venv env
+        source env/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Rsync over requirements file
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_MAC_PIP_CHECK_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_MAC_PIP_CHECK_FOLDER }}/requirements.txt
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./requirements.txt
+        
+    - name: SSH Server Deploy
+      uses: kostya-ten/ssh-server-deploy@v3
+      with:
+        host: ${{ secrets.PROD_MAC_PIP_CHECK_HOST }}
+        username: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        password: ${{ secrets.PROD_BOT_SERVER_PASSWORD }}
+        after_script: |
+          cd ${{ secrets.PROD_MAC_PIP_CHECK_FOLDER }}
+          /usr/local/bin/python3 -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          deactivate
+          rm requirements.txt
+          rm -rf env
+    
+        
+        
+      env:
+        PYTHONPATH: ${{ github.workspace }}/bin:${{ github.workspace }}/bin/discord:${{ github.workspace }}/bin/healthchecks
+
