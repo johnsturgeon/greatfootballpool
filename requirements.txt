@@ -56,7 +56,6 @@ typed-ast==1.4.1
 typing-extensions==3.7.4.3
 ujson==4.0.1
 urllib3==1.25.11
-values==0.0.0
 Werkzeug==1.0.1
 wrapt==1.12.1
 yapf==0.30.0
