@@ -4,26 +4,18 @@ from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
 import discord  # noqa E402
-from discord import Guild  # noqa W291
-
-client = discord.Client()
-TOKEN = settings['discord']['token']
 
 
-# TODO: Fix the bot_sender to actually send game alerts
-@client.event
-async def on_ready():
-    guild_name = settings['discord']['guild']
-    guild: Guild
-    for guild in client.guilds:
-        if guild.name == guild_name:
-            break
-    channel = None
-    for channel in guild.channels:
-        if channel.name == "tgfp-bot-chat":
-            break
-    await channel.send("Hi")
-    await client.close()
+def send_message(message):
 
+    client = discord.Client()
 
-client.run(TOKEN)
+    @client.event
+    async def on_ready():
+        channel = client.get_channel(channel_id)
+        await channel.send(message)
+        await client.close()
+
+    TOKEN = settings['discord']['token']
+    channel_id = settings['discord']['bot_chat_channel_id']
+    client.run(TOKEN)
