@@ -1,7 +1,9 @@
 name: Lint Only
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'dependabot/*'
     
 jobs:
   build:
@@ -13,13 +15,6 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install dependencies
-      run: |
-        cd ${{ github.workspace }}
-        python -m venv env
-        source env/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
         
     - name: Rsync over requirements file
       uses: up9cloud/action-rsync@master
