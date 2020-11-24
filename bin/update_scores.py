@@ -10,7 +10,7 @@ from tgfp import TGFP  # noqa E402
 
 def main():
     """ This is the function runs the entire module. """
-    pp = pprint.PrettyPrinter(indent=4)
+    pretty_printer = pprint.PrettyPrinter(indent=4)
     tgfp = TGFP()
     week_no = tgfp.current_week()
     yahoo = Yahoo(week_no=week_no)
@@ -31,7 +31,7 @@ def main():
                     tgfp_g.road_team_score = int(yahoo_g.total_away_points)
                     tgfp_g.game_status = yahoo_g.status_type
                     print("saving a game score")
-                    pp.pprint(tgfp_g.mongo_data())
+                    pretty_printer.pprint(tgfp_g.mongo_data())
                     tgfp_g.save()
                     if yahoo_g.score_is_final:
                         print("Sending alert")

@@ -3,6 +3,7 @@
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
+# pylint: disable=C0411
 import subprocess  # noqa: E402
 from subprocess import check_output, CalledProcessError  # noqa: E402
 

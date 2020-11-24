@@ -10,6 +10,7 @@ from discord.bot_launchd_helper import restart  # noqa E402
 
 
 def main():
+    """Execute the steps in order necessary to update everything"""
     backup_db()
     update_scores()
     update_win_loss()
