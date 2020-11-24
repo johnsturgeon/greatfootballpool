@@ -15,8 +15,8 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        python -m pip install --use-feature=2020-resolver --upgrade pip
+        pip install --use-feature=2020-resolver -r requirements.txt
     - name: Test with pytest
       run: |
         pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
@@ -79,8 +79,8 @@ jobs:
           cd ${{ secrets.PROD_BOT_SERVER_HOME }}
           /usr/local/bin/python3 -m venv env
           source env/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --use-feature=2020-resolver --upgrade pip
+          pip install --use-feature=2020-resolver -r requirements.txt
           deactivate
           rm requirements.txt
 
