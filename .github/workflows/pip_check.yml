@@ -3,7 +3,7 @@ name: Pip Dependancy Check (macOS)
 on:
   pull_request:
     branches:
-      - 'dependabot/*'
+      - 'dependabot/**'
     
 jobs:
   build:
