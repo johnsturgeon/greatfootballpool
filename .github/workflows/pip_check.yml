@@ -1,7 +1,9 @@
 name: Pip Dependancy Check (macOS)
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - '*dependabot/*'
     
 jobs:
   build:
