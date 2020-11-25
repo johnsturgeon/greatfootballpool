@@ -23,9 +23,7 @@ jobs:
     - name: Check code with flake8
       run: |
         flake8 --config .flake8 bin/*.py flask_site/include/*.py
-    - name: ShellCheck
-      run: |
-        shellcheck -x bin/*.sh
+
   deploy:
     name: Deploy to production
     needs: build

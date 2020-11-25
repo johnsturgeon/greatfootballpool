@@ -30,9 +30,3 @@ jobs:
     - name: Check code with flake8
       run: |
         env/bin/python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
-    - name: Unit Tests
-      run: |
-        env/bin/python -m pytest --ignore=tests/test_mongo_backup.py --ignore=tests/test_discord_bot_tester.py
-      env:
-        PYTHONPATH: ${{ github.workspace }}/bin:${{ github.workspace }}/bin/discord:${{ github.workspace }}/bin/healthchecks
-
