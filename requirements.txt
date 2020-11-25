@@ -22,6 +22,7 @@ isort==5.6.4
 itsdangerous==1.1.0
 jedi==0.17.2
 Jinja2==2.11.2
+launchctl==0.0.0
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
@@ -29,6 +30,7 @@ mongoengine==0.21.0
 multidict==4.7.6
 packaging==20.4
 parso==0.7.1
+pipdeptree==1.0.0
 pluggy==0.13.1
 py==1.9.0
 pycodestyle==2.6.0
@@ -36,6 +38,9 @@ pydocstyle==5.1.1
 pyflakes==2.2.0
 pylint==2.6.0
 pymongo==3.11.1
+pyobjc-core==6.2.2
+pyobjc-framework-Cocoa==6.2.2
+pyobjc-framework-ServiceManagement==6.2.2
 pyparsing==2.4.7
 pytest==6.1.2
 pytest-mock==3.3.1
@@ -56,6 +61,7 @@ typed-ast==1.4.1
 typing-extensions==3.7.4.3
 ujson==4.0.1
 urllib3==1.25.11
+values==0.0.0
 Werkzeug==1.0.1
 wrapt==1.12.1
 yapf==0.30.0
