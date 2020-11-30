@@ -37,9 +37,9 @@ pydocstyle==5.1.1
 pyflakes==2.2.0
 pylint==2.6.0
 pymongo==3.11.1
-pyobjc-core==7.0
-pyobjc-framework-Cocoa==7.0
-pyobjc-framework-ServiceManagement==6.2.2
+pyobjc-core==7.0.1
+pyobjc-framework-Cocoa==7.0.1
+pyobjc-framework-ServiceManagement==7.0.1
 pyparsing==2.4.7
 pytest==6.1.2
 pytest-mock==3.3.1
