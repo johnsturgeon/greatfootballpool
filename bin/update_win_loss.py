@@ -10,7 +10,7 @@ def main():
     tgfp = TGFP()
     yahoo = Yahoo(tgfp.current_week())
 
-    last_week = tgfp.last_week_completed()
+    last_week = tgfp.current_active_week()
     active_players = tgfp.find_players(player_active=True)
 
     for player in active_players:
