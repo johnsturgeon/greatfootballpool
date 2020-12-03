@@ -1,6 +1,6 @@
 """
   This module contains all of the necessary functions for interfacing with
-  the the great football pool mongo database
+  yahoo for retrieving scores, schedule data, etc.
 """
 from urllib.request import Request, urlopen
 import re
@@ -10,6 +10,7 @@ from dateutil import parser
 
 class Yahoo():
     """ The main class for interfacing with Yahoo's json for sports """
+
     def __init__(self, week_no):
         self._games = []
         self._teams = []
@@ -93,7 +94,7 @@ class Yahoo():
             # print(json.dumps(teams_data))
             for teamkey in teams_data:
                 if 'default_league' in teams_data[teamkey] and \
-                  teams_data[teamkey]['default_league'] == "nfl":
+                   teams_data[teamkey]['default_league'] == "nfl":
                     self._teams.append(YahooTeam(self, team_data=teams_data[teamkey]))
 
         return self._teams
@@ -118,6 +119,7 @@ class Yahoo():
 class YahooGame():
     """ A single game from the Yahoo json """
     # pylint: disable=too-many-instance-attributes
+
     def __init__(self, yahoo, game_data):
         # pylint: disable=invalid-name
         self.id = game_data['gameid']
@@ -204,6 +206,7 @@ class YahooTeam():
 class YahooOdd():
     """ Wraps the yahoo json for each 'odd' (spread) """
     # pylint: disable=too-few-public-methods
+
     def __init__(self, yahoo, odd_data):
         self.yahoo = yahoo
         self.data = odd_data

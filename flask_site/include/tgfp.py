@@ -2,16 +2,15 @@
   This module contains all of the necessary functions for interfacing with
   the the great football pool mongo database
 """
-import os
-import pprint
-from pymongo import MongoClient
-import pytz
-from yahoo import Yahoo
-from dotenv import load_dotenv
+from init import get_settings
+settings = get_settings()
+# pylint: disable=wrong-import-position
+# pylint: disable=C0411
+import pprint  # noqa E402
+from pymongo import MongoClient  # noqa E402
+import pytz  # noqa E402
+from yahoo import Yahoo  # noqa E402
 
-dirname = os.path.dirname(os.path.abspath(__file__))
-DOT_ENV_PATH = os.path.normpath(os.path.join(dirname, '../../conf/.env'))
-load_dotenv(dotenv_path=DOT_ENV_PATH)
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -20,16 +19,22 @@ class TGFP():
     """
     Main class for the great football pool
     """
+
     # pylint: disable=too-many-instance-attributes
-    def __init__(self):
+    def __init__(self, load_test_fixture=False):
         # traceback.print_stack(file=sys.stdout)
         self.init_ivars()
-        self.mongoclient = MongoClient(
-            os.getenv('MONGO_DB_URL'))
-        self.mongodb = self.mongoclient['tgfp']
+        mongo_db_url = (
+            settings['mongo']['test_db_url'] if load_test_fixture
+            else settings['mongo']['db_url']
+        )
+        self.mongoclient = MongoClient(mongo_db_url)
+        self.mongodb = (
+            self.mongoclient['tgfp_test'] if load_test_fixture
+            else self.mongoclient['tgfp']
+        )
         self._yahoo = None
         self._home_page_text = None
-        self._last_week_completed = None
         self._current_season = None
 
     def games(self):
@@ -67,6 +72,12 @@ class TGFP():
         return self._yahoo
 
     def current_week(self):
+        """
+        Gets the current week"
+
+        This is defined the current week.
+        It will advance to the next week once all games are 'final'
+        """
         last_game: TGFPGame
         current_week: int
         last_game = self.find_games(ordered_by='week_no')[-1]
@@ -84,15 +95,6 @@ class TGFP():
 
         return current_week
 
-    def home_page_text(self):
-        if not self._home_page_text:
-            tgfp_info = self.mongodb.tgfp_info.find_one(batch_size=100000)
-            self._home_page_text = tgfp_info['home_page_text']
-        return self._home_page_text
-
-    def last_week_completed(self):
-        return self.current_active_week()
-
     def current_season(self):
         if not self._current_season:
             current_season = self.mongodb.tgfp_info.find_one(batch_size=100000)
@@ -100,6 +102,14 @@ class TGFP():
         return self._current_season
 
     def current_active_week(self):
+        """
+        Gets the currently 'active' week"
+
+        This is defined the most recent week where at least one game has been marked as 'final'.
+        It is used for the purposes of showing the 'last wins, losses, etc...' on the standings page.
+        Return:
+            int: current_active_week
+        """
         last_game: TGFPGame
         current_week: int
         last_game = self.find_games(ordered_by='week_no')[-1]
@@ -116,6 +126,12 @@ class TGFP():
             current_week = game.week_no - 1
 
         return current_week
+
+    def home_page_text(self):
+        if not self._home_page_text:
+            tgfp_info = self.mongodb.tgfp_info.find_one(batch_size=100000)
+            self._home_page_text = tgfp_info['home_page_text']
+        return self._home_page_text
 
     def find_players(
             self,
@@ -140,13 +156,13 @@ class TGFP():
         player: TGFPPlayer
         for player in self.players():
             found = True
-            if player_id and player_id != player.id:
+            if player_id is not None and player_id != player.id:
                 found = False
-            if player_email and player_email != player.email:
+            if player_email is not None and player_email != player.email:
                 found = False
-            if player_active and player_active != player.active:
+            if player_active is not None and player_active != player.active:
                 found = False
-            if discord_id and discord_id != player.discord_id:
+            if discord_id is not None and discord_id != player.discord_id:
                 found = False
             if found:
                 found_players.append(player)
@@ -193,9 +209,11 @@ class TGFP():
         return found_picks
 
     def find_games(
-            self, game_id=None,
+            self,
+            game_id=None,
             yahoo_game_id=None,
-            week_no=None, season=None,
+            week_no=None,
+            season=None,
             home_team_id=None,
             ordered_by=None,
             game_status=None):
@@ -236,7 +254,6 @@ class TGFP():
         self._games = []
         self._picks = []
         self._players = []
-        self._last_week_completed = 0
         self._home_page_text = ""
         self._current_season = 0
         self._yahoo = None
@@ -247,6 +264,7 @@ class TGFPTeam():
     """
     TGFP Class for a 'team'
     """
+
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
         self._id = data['_id']
@@ -285,6 +303,7 @@ class TGFPTeam():
 class TGFPPlayer():
     # pylint: disable=too-many-instance-attributes
     """ Class for a player """
+
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
         self._picks = None
@@ -302,14 +321,28 @@ class TGFPPlayer():
         # pylint: disable=invalid-name
         return self._id
 
-    def wins(self, week_no=None):
+    def wins(self, week_through=None, week_no=None):
+        """return the number of wins optionally for a single week, or through week_no"""
+        assert week_no is None or week_through is None
         if not self._picks:
             self.load_picks()
         wins = 0
         for pick in self._picks:
-            if not week_no or pick.week_no == week_no:
+            if week_no is None and week_through is None:
+                wins += pick.wins
+            elif week_through and pick.week_no <= week_through:
+                wins += pick.wins
+            elif week_no and pick.week_no == week_through:
                 wins += pick.wins
         return wins
+
+    def win_csv(self):
+        week_range = range(1, self._tgfp.current_week())
+        win_csv = f"{self.nick_name}"
+        for week_no in week_range:
+            points = self.wins(week_through=week_no) + self.bonus(week_through=week_no)
+            win_csv += f",{points}"
+        return win_csv
 
     def losses(self, week_no=None):
         if not self._picks:
@@ -320,26 +353,31 @@ class TGFPPlayer():
                 losses += pick.losses
         return losses
 
-    def bonus(self, week_no=None):
+    def bonus(self, week_through=None, week_no=None):
+        assert week_no is None or week_through is None
         if not self._picks:
             self.load_picks()
         bonus = 0
         for pick in self._picks:
-            if not week_no or pick.week_no == week_no:
+            if week_no is None and week_through is None:
+                bonus += pick.bonus
+            elif week_through and pick.week_no <= week_through:
+                bonus += pick.bonus
+            elif week_no and pick.week_no == week_through:
                 bonus += pick.bonus
         return bonus
 
     def last_bonus(self):
-        return self.bonus(week_no=self._tgfp.last_week_completed())
+        return self.bonus(week_no=self._tgfp.current_active_week())
 
     def total_points(self):
         return self.wins() + self.bonus()
 
     def last_wins(self):
-        return self.wins(week_no=self._tgfp.last_week_completed())
+        return self.wins(week_no=self._tgfp.current_active_week())
 
     def last_losses(self):
-        return self.losses(week_no=self._tgfp.last_week_completed())
+        return self.losses(week_no=self._tgfp.current_active_week())
 
     def load_picks(self):
         self._picks = self._tgfp.find_picks(player_id=self._id)
@@ -437,6 +475,7 @@ class TGFPPlayer():
 class TGFPGame():
     # pylint: disable=too-many-instance-attributes
     """ Game class for the TGFP """
+
     def __init__(self, tgfp, data=None):
         self._tgfp = tgfp
         self._id = None
@@ -582,8 +621,9 @@ class TGFPGame():
 
 class TGFPPick():
     """ Class for the player's picks """
-# pylint: disable=too-many-instance-attributes
-# pylint: enable=too-many-instance-attributes
+    # pylint: disable=too-many-instance-attributes
+    # pylint: enable=too-many-instance-attributes
+
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
         self._id = None
@@ -621,8 +661,8 @@ class TGFPPick():
         self.bonus = 0
 
         games_array = self._tgfp.find_games(
-                            week_no=self.week_no,
-                            season=self.season) if games is None else games
+            week_no=self.week_no,
+            season=self.season) if games is None else games
 
         pick: TGFPPick
         for pick in self.pick_detail:

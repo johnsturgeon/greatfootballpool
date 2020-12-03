@@ -16,3 +16,4 @@ conf/settings.json
 conf/prod.settings.json
 conf/dev.settings.json
 .nova
+.idea
