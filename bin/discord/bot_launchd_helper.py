@@ -8,7 +8,6 @@ import subprocess  # noqa E402
 
 def restart():
     try:
-        subprocess.check_output(['/bin/launchctl', 'stop', 'TGFP: Discord Bot'],
-                                stderr=subprocess.STDOUT).decode("utf-8")
+        subprocess.check_output(['/bin/launchctl', 'stop', 'TGFP: Discord Bot'])
     except subprocess.CalledProcessError as err:
-        raise RuntimeError('Could not back up Mongo DB') from err
+        raise RuntimeError('Could not stop TGFP: Discord Bot') from err
