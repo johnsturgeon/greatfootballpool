@@ -8,50 +8,86 @@ import pytest  # noqa E402
 from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer  # noqa E402
 from yahoo import Yahoo  # noqa E402
 from bson import ObjectId  # noqa: E402
+# pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
 def tgfp_db():
+    """
+    This will return the default tgfp database object loaded with the test fixture
+
+    :return: tgfp database object
+    :rtype: TGFP
+    """
     return TGFP(load_test_fixture=True)
 
 
 @pytest.fixture
-def tgfp_db_reg_season(tgfp_db):
+def tgfp_db_reg_season(tgfp_db: TGFP):
+    """
+    Extends the :func:`tgfp_db` database method, truncates the playoffs, returning just
+    the regular season
+
+    :param tgfp_db: Test DB with all the games loaded
+    :type tgfp_db: TGFP
+    :return: Test DB with playoff games removed (just regular season)
+    :rtype: TGFP
+    """
     games = tgfp_db.find_games(ordered_by='week_no')
     new_games = []
     for game in games:
         if game.week_no <= 17:  # 17 weeks in the regular season
             new_games.append(game)
+    # pylint: disable=protected-access
+    # ^^^ I know what I'm doing here.
     tgfp_db._games = new_games
     return tgfp_db
 
 
 @pytest.fixture
-# regular season with one game in pregame
 def tgfp_db_reg_season_a(tgfp_db_reg_season):
-    # make one of the games 'pregame', remaining games are 'final'
+    """
+    Extends the :func:`tgfp_db_reg_season` database method, sets one game in the final week to
+    'pregame'
+
+    :param tgfp_db_reg_season: Test DB with all the regular season games loaded
+    :type tgfp_db_reg_season: TGFP
+    :return: Same DB as input with one game set to 'pregame'
+    :rtype: TGFP
+    """
     last_game = tgfp_db_reg_season.find_games(ordered_by='week_no')[-1]
     last_game.game_status = 'pregame'
     return tgfp_db_reg_season
 
 
 @pytest.fixture
-# regular season with one game in progress
 def tgfp_db_reg_season_b(tgfp_db_reg_season):
     """
+    Extends the :func:`tgfp_db_reg_season` database method, sets one game in the final week to
+    'in progress'
 
-    :TGFP tgfp_db_reg_season: Regular season data
+    :param tgfp_db_reg_season: Test DB with all the regular season games loaded
+    :type tgfp_db_reg_season: TGFP
+    :return: Same DB as input with one game set to 'in progress'
+    :rtype: TGFP
     """
-    # make one of the games 'pregame', remaining games are 'final'
     last_game = tgfp_db_reg_season.find_games(ordered_by='week_no')[-1]
     last_game.game_status = 'in progress'
     return tgfp_db_reg_season
 
 
 @pytest.fixture
-# regular season with all games of last week in pregame
 def tgfp_db_reg_season_c(tgfp_db_reg_season):
-    # now set all games to 'pregame'
+    """
+    Extends the :func:`tgfp_db_reg_season` database method, sets all games in the final week to
+    'pregame'
+
+    :param tgfp_db_reg_season: Test DB with all the regular season games loaded
+    :type tgfp_db_reg_season: TGFP
+    :return: Same DB as input with all games in the final week to
+    'pregame'
+    :rtype: TGFP
+    """
     for game in tgfp_db_reg_season.games():
         if game.week_no == 17:
             game.game_status = 'pregame'
@@ -62,7 +98,16 @@ def tgfp_db_reg_season_c(tgfp_db_reg_season):
 @pytest.fixture
 # regular season with all games of last week in progress
 def tgfp_db_reg_season_d(tgfp_db_reg_season):
-    # now set all games to 'pregame'
+    """
+    Extends the :func:`tgfp_db_reg_season` database method, sets all games in the final week to
+    'in progress'
+
+    :param tgfp_db_reg_season: Test DB with all the regular season games loaded
+    :type tgfp_db_reg_season: TGFP
+    :return: Same DB as input with all games in the final week to
+    'in progress'
+    :rtype: TGFP
+    """
     for game in tgfp_db_reg_season.games():
         if game.week_no == 17:
             game.game_status = 'in progress'
@@ -70,6 +115,7 @@ def tgfp_db_reg_season_d(tgfp_db_reg_season):
     return tgfp_db_reg_season
 
 
+# pylint: disable=missing-function-docstring
 def test_games(tgfp_db):
     games = tgfp_db.games()
     assert len(games) == 267
@@ -127,7 +173,8 @@ def test_current_week_all_games_in_progress(tgfp_db_reg_season_d):
 
 
 def test_home_page_text(tgfp_db):
-    assert '<br><br><font class="date" style="font-weight:bold">Welcome</font>' in tgfp_db.home_page_text()
+    assert '<br><br><font class="date" style="font-weight:bold">Welcome</font>'\
+           in tgfp_db.home_page_text()
 
 
 def test_find_players(tgfp_db):
@@ -173,6 +220,7 @@ def test_find_teams(tgfp_db):
 
 def test_find_picks(tgfp_db):
     assert len(tgfp_db.find_picks()) == 441
+    # noinspection SpellCheckingInspection
     found_picks = tgfp_db.find_picks(pick_id=ObjectId('5b8feea5bf75f56e643f991a'))
     assert len(found_picks) == 1
     assert found_picks[0].player_id == ObjectId('59a97660ee45e20848e119aa')
@@ -201,9 +249,8 @@ def test_find_games(tgfp_db):
     found_games = tgfp_db.find_games(game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
     assert len(found_games) == 1
     assert found_games[0].yahoo_game_id == 'nfl.g.20190908030'
-    found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
-
+    # found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
+    # found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
+    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
+    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
+    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))

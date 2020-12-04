@@ -2,6 +2,7 @@
 """Discord bot runs in the background and handles all requests to discord."""
 from init import get_settings
 settings = get_settings()
+# pylint: disable=wrong-import-order
 # pylint: disable=wrong-import-position
 import os  # noqa: E402
 import socket  # noqa: E402
