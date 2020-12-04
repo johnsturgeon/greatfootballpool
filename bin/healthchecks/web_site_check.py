@@ -3,6 +3,7 @@
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-order
 import urllib.request  # noqa: E402
 import socket  # noqa: E402
 import sentry_sdk  # noqa: E402
@@ -14,11 +15,11 @@ WEB_CHECK_URL = settings['healthchecks']['tgfp_web_check_url']
 sentry_sdk.init(dsn=SENTRY_DSN, environment=ENVIRONMENT)
 
 try:
-    retcode = urllib.request.urlopen(FLASK_SITE_URL).getcode()
+    RETURN_CODE = urllib.request.urlopen(FLASK_SITE_URL).getcode()
 except socket.error:
-    retcode = 404
+    RETURN_CODE = 404
 
-if retcode == 200:
+if RETURN_CODE == 200:
     try:
         urllib.request.urlopen(WEB_CHECK_URL, timeout=10)
     except socket.error as exception:
