@@ -4,8 +4,8 @@ cd "$BASEDIR/../" || exit
 python3 -m venv env
 # shellcheck disable=SC1091
 source env/bin/activate
-pip install --use-feature=2020-resolver --upgrade pip
-pip install --use-feature=2020-resolver -r requirements.txt
+pip install --upgrade pip
+pip install -r requirements.txt
 cp conf/tgfp_paths.pth env/lib/python3.*/site-packages
 # Create conf/.env file
 # .env
