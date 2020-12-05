@@ -3,8 +3,11 @@
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
-import launchctl  # noqa: E402
+import subprocess  # noqa E402
 
 
 def restart():
-    launchctl.stop('TGFP: Discord Bot')
+    try:
+        subprocess.check_output(['/bin/launchctl', 'stop', 'TGFP: Discord Bot'])
+    except subprocess.CalledProcessError as err:
+        raise RuntimeError('Could not stop TGFP: Discord Bot') from err

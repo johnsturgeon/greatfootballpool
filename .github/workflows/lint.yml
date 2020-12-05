@@ -17,13 +17,18 @@ jobs:
         cd ${{ github.workspace }}
         python -m venv env
         source env/bin/activate
-        pip install --use-feature=2020-resolver --upgrade pip
-        pip install --use-feature=2020-resolver -r requirements.txt
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
     - name: Install config file
       run: |
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
+
+    - name: Copy *.pth into site packages
+      run: |
+        cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
     - name: Lint with pylint
       run: |
         env/bin/python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py

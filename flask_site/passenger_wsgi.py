@@ -52,6 +52,7 @@ def before_request():
     if os.path.exists("maintenance"):
         abort(503)
     if 'static' not in request.path and '_profile' not in request.path:
+        tgfp = None
         if not hasattr(g, 'tgfp'):
             tgfp = TGFP()
         g.current_week = tgfp.current_week()
@@ -274,7 +275,8 @@ def logout():
 @application.errorhandler(503)
 def error_503(error):
     # pylint: disable=unused-argument
-    return "The Great Football Pool is undergoing some maintenence right now, we'll be back soon!"
+    assert error
+    return "The Great Football Pool is undergoing some maintenance right now, we'll be back soon!"
 
 
 # pylint: enable=missing-function-docstring

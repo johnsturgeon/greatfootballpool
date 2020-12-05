@@ -106,7 +106,8 @@ class TGFP():
         Gets the currently 'active' week"
 
         This is defined the most recent week where at least one game has been marked as 'final'.
-        It is used for the purposes of showing the 'last wins, losses, etc...' on the standings page.
+        It is used for the purposes of showing the 'last wins, losses, etc...' on the standings
+        page.
         Return:
             int: current_active_week
         """
