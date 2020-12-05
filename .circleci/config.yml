@@ -5,9 +5,7 @@ orbs:
 
 jobs:
   build-and-test:
-    macos:
-      xcode: 11.3.0
-
+    executor: python/default
     steps:
       - checkout
       - python/load-cache
