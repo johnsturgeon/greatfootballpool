@@ -15,14 +15,27 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        cd ${{ github.workspace }}
+        python -m venv env
+        source env/bin/activate
+        pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Test with pytest
+
+    - name: Install config file
       run: |
-        pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+        cat << EOF > ${{ github.workspace }}/conf/settings.json
+        ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+        EOF
+
+    - name: Copy *.pth into site packages
+      run: |
+        cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
+    - name: Lint with pylint
+      run: |
+        env/bin/python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
     - name: Check code with flake8
       run: |
-        flake8 --config .flake8 bin/*.py flask_site/include/*.py
+        env/bin/python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
 
   deploy:
     name: Deploy bin / bot
