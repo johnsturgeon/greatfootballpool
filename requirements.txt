@@ -25,7 +25,7 @@ Jinja2==2.11.2
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
-mongoengine==0.21.0
+mongoengine==0.22.1
 multidict==4.7.6
 packaging==20.7
 parso==0.7.1
