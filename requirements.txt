@@ -44,7 +44,7 @@ pytest-shell==0.2.3
 python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-jsonrpc-server==0.4.0
-python-language-server==0.36.1
+python-language-server==0.36.2
 pytz==2020.4
 raven==6.10.0
 rope==0.18.0
