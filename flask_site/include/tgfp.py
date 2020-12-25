@@ -10,7 +10,7 @@ import pprint  # noqa E402
 from pymongo import MongoClient  # noqa E402
 import pytz  # noqa E402
 from yahoo import Yahoo  # noqa E402
-from bson import ObjectId
+from bson import ObjectId  # noqa E402
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -37,7 +37,6 @@ class TGFP():
         self._yahoo = None
         self._home_page_text = None
         self._current_season = None
-
 
     def games(self):
         """
