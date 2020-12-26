@@ -10,6 +10,7 @@ import pprint  # noqa E402
 from pymongo import MongoClient  # noqa E402
 import pytz  # noqa E402
 from yahoo import Yahoo  # noqa E402
+from bson import ObjectId  # noqa E402
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -333,7 +334,7 @@ class TGFPPlayer():
                 wins += pick.wins
             elif week_through and pick.week_no <= week_through:
                 wins += pick.wins
-            elif week_no and pick.week_no == week_through:
+            elif week_no and pick.week_no == week_no:
                 wins += pick.wins
         return wins
 
@@ -364,7 +365,7 @@ class TGFPPlayer():
                 bonus += pick.bonus
             elif week_through and pick.week_no <= week_through:
                 bonus += pick.bonus
-            elif week_no and pick.week_no == week_through:
+            elif week_no and pick.week_no == week_no:
                 bonus += pick.bonus
         return bonus
 
@@ -399,61 +400,6 @@ class TGFPPlayer():
             return picks[0]
 
         return None
-
-    def picked_winner_of_final_game(self, tgfp_game_id):
-        game: TGFPGame
-        game = self._tgfp.find_games(game_id=tgfp_game_id)[0]
-        assert game.game_status == 'final'
-        picks = self.this_weeks_picks()
-        assert picks, "We should have picks"
-        for pick in picks.pick_detail:
-            if pick['game_id'] == game.id:
-                return game.winner_id_of_game == pick['winner_id']
-
-        return False
-
-    def lock_pick_points_final_game(self, tgfp_game_id):
-        """
-        Given a game, how many 'lock' points
-        Args:
-             tgfp_game_id: str the game to check
-            game status must be 'final'
-        Returns:
-            - int: -1, 0, or 1
-        Note:
-            -1 indicates lost lock point
-            0 indicates no lock
-            1 indicates won lock
-        Note:
-            The method will assert if the game is not final
-        """
-
-        game = self._tgfp.find_games(game_id=tgfp_game_id)[0]
-        assert game.game_status == 'final'
-        picks = self.this_weeks_picks()
-        lock_points = 0
-        # first let's figure out if the game.winner_team_id is equal to the lock
-        if game.winner_id_of_game == picks.lock_team_id:
-            if self.picked_winner_of_final_game(tgfp_game_id):
-                lock_points = 1
-            else:
-                lock_points = -1
-
-        return lock_points
-
-    # Returns 0 or 1
-    # 0 indicates no upset
-    # 1 indicates won upset
-    def upset_pick_points_final_game(self, tgfp_game_id):
-        game = self._tgfp.find_games(game_id=tgfp_game_id)[0]
-        assert game.game_status == 'final'
-        picks = self.this_weeks_picks()
-        # first let's figure out if the game_id is equal to the upset
-        pick_points = 0
-        if game.winner_id_of_game == picks.upset_team_id:
-            pick_points = 1
-
-        return pick_points
 
     def mongo_data(self):
         filtered_dict = {}
@@ -564,14 +510,14 @@ class TGFPGame():
 
     @property
     def winning_team(self):
-        if self.game_status == 'final':
+        if self.game_status == 'final' and self.winner_id_of_game:
             return self._tgfp.find_teams(team_id=self.winner_id_of_game)[0]
 
         return None
 
     @property
     def losing_team(self):
-        if self.game_status == 'final':
+        if self.game_status == 'final' and self.loser_id_of_game:
             return self._tgfp.find_teams(team_id=self.loser_id_of_game)[0]
 
         return None
@@ -599,15 +545,7 @@ class TGFPGame():
         return losing_team_score
 
     @property
-    def road_team(self):
-        return self._tgfp.find_teams(team_id=self.road_team_id)
-
-    @property
-    def home_team(self):
-        return self._tgfp.find_teams(team_id=self.home_team_id)
-
-    @property
-    def underdog_team_id(self):
+    def underdog_team_id(self) -> ObjectId:
         if self.favorite_team_id == self.home_team_id:
             return self.road_team_id
 

@@ -173,7 +173,7 @@ def test_current_week_all_games_in_progress(tgfp_db_reg_season_d):
 
 
 def test_home_page_text(tgfp_db):
-    assert '<br><br><font class="date" style="font-weight:bold">Welcome</font>'\
+    assert '<br><br><font class="date" style="font-weight:bold">Welcome</font>' \
            in tgfp_db.home_page_text()
 
 
@@ -201,11 +201,11 @@ def test_find_players(tgfp_db):
     found_players = tgfp_db.find_players(ordered_by='total_points')
     assert len(found_players) == 27
     assert found_players[0].total_points() == 0  # last place
-    assert found_players[-1].total_points() == 195   # first place
+    assert found_players[-1].total_points() == 195  # first place
     found_players = tgfp_db.find_players(ordered_by='total_points', reverse_order=True)
     assert len(found_players) == 27
     assert found_players[0].total_points() == 195  # first place
-    assert found_players[-1].total_points() == 0   # last place
+    assert found_players[-1].total_points() == 0  # last place
 
 
 def test_find_teams(tgfp_db):
@@ -234,23 +234,36 @@ def test_find_picks(tgfp_db):
     assert len(found_picks) == 21
 
 
-# def find_games(
-#     self,
-#     game_id=None,
-#     yahoo_game_id=None,
-#     week_no=None,
-#     season=None,
-#     home_team_id=None,
-#     ordered_by=None,
-#     game_status=None):
-
 def test_find_games(tgfp_db):
     assert len(tgfp_db.find_games()) == 267
     found_games = tgfp_db.find_games(game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
     assert len(found_games) == 1
     assert found_games[0].yahoo_game_id == 'nfl.g.20190908030'
-    # found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    # found_games = tgfp_db.find_games(yahoo_game_id=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
-    # found_games = tgfp_db.find_games(season=ObjectId('5d6fcc5fd4fa6803c650581b'))
+    found_games = tgfp_db.find_games(yahoo_game_id='nfl.g.20190908020')
+    assert found_games[0].home_team_score == 16
+    assert len(found_games) == 1
+    found_games = tgfp_db.find_games(week_no=15)
+    assert len(found_games) == 16
+    assert found_games[0].favorite_team_id == ObjectId('59ac8f79ee45e20848e11a95')
+    found_games = tgfp_db.find_games(season=2019)
+    assert len(found_games) == 267
+    found_games = tgfp_db.find_games(season=2018)
+    assert len(found_games) == 0
+    found_games = tgfp_db.find_games(season=2019, week_no=15)
+    assert len(found_games) == 16
+    found_games = tgfp_db.find_games(season=2018, week_no=15)
+    assert len(found_games) == 0
+    found_games = tgfp_db.find_games(home_team_id=ObjectId("59ac8f24ee45e20848e11a80"))
+    assert len(found_games) == 8
+    found_games = tgfp_db.find_games(ordered_by='start_time')
+    assert found_games[0].yahoo_game_id == 'nfl.g.20190905003'
+    found_games = tgfp_db.find_games(game_status='in progress')
+    assert len(found_games) == 0
+
+
+def test_find_games_2(tgfp_db_reg_season_b):
+    found_games = tgfp_db_reg_season_b.find_games(game_status='in progress')
+    assert len(found_games) == 1
+    assert found_games[0].game_status == 'in progress'
+    assert found_games[0].yahoo_game_id == 'nfl.g.20191229030'
+
