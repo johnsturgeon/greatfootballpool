@@ -5,7 +5,6 @@ import logging
 import json
 from tgfp import TGFP
 import discord
-# from discord import Guild
 
 client = discord.Client()
 
@@ -47,19 +46,19 @@ def embed_game_alert():
     for player in tgfp.find_players(player_active=True):
         if player.this_weeks_picks() is None:
             break
-        if player.picked_winner_of_final_game(game_id):
-            bonus = player.lock_pick_points_final_game(game_id)
-            bonus += player.upset_pick_points_final_game(game_id)
-            winning_players_string += f"{player.nick_name}"
-            if bonus != 0:
-                winning_players_string += f" ({bonus:+})"
-            winning_players_string += "\n"
-        else:
-            bonus = player.lock_pick_points_final_game(game_id)
-            losing_players_string += f"{player.nick_name}"
-            if bonus != 0:
-                losing_players_string += f" ({bonus:+})"
-            losing_players_string += "\n"
+        # if player.picked_winner_of_final_game(game_id):
+        #     bonus = player.lock_pick_points_final_game(game_id)
+        #     bonus += player.upset_pick_points_final_game(game_id)
+        #     winning_players_string += f"{player.nick_name}"
+        #     if bonus != 0:
+        #         winning_players_string += f" ({bonus:+})"
+        #     winning_players_string += "\n"
+        # else:
+        #     bonus = player.lock_pick_points_final_game(game_id)
+        #     losing_players_string += f"{player.nick_name}"
+        #     if bonus != 0:
+        #         losing_players_string += f" ({bonus:+})"
+        #     losing_players_string += "\n"
 
     embed = discord.Embed(
         title="GAME ALERT",
