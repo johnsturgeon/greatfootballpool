@@ -5,4 +5,9 @@ import common_init
 
 
 def get_settings():
+    """
+
+    :return: all common settings
+    :rtype: dict
+    """
     return common_init.get_settings("../../", __file__)
