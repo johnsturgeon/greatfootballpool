@@ -16,6 +16,6 @@ def send_message(message):
         await channel.send(message)
         await client.close()
 
-    TOKEN = settings['discord']['token']
+    token = settings['discord']['token']
     channel_id = settings['discord']['bot_chat_channel_id']
-    client.run(TOKEN)
+    client.run(token)

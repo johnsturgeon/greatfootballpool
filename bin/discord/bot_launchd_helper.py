@@ -8,7 +8,21 @@ import subprocess  # noqa E402
 
 def restart():
     try:
-        subprocess.call(['/bin/launchctl', 'unload', '-w', '/Users/johnsturgeon//Library/LaunchAgents/TGFP Discord Bot.plist' ])
-        subprocess.call(['/bin/launchctl', 'load', '-w', '/Users/johnsturgeon//Library/LaunchAgents/TGFP Discord Bot.plist' ])
+        subprocess.call(
+            [
+                '/bin/launchctl',
+                'unload',
+                '-w',
+                '/Users/johnsturgeon//Library/LaunchAgents/TGFP Discord Bot.plist'
+            ]
+        )
+        subprocess.call(
+            [
+                '/bin/launchctl',
+                'load',
+                '-w',
+                '/Users/johnsturgeon//Library/LaunchAgents/TGFP Discord Bot.plist'
+            ]
+        )
     except subprocess.CalledProcessError as err:
         raise RuntimeError('Could not stop TGFP: Discord Bot') from err

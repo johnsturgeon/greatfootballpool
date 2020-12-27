@@ -99,12 +99,12 @@ def test_message():
 def this_week(message) -> str:
     # pylint: disable=too-many-locals
     """ returns message for the player's record for the current week """
-    player: TGFPPlayer
+    player: TGFPPlayer = tgfp.find_players(player_email=ADMIN_EMAIL)[0]
     players = tgfp.find_players(discord_id=message.author.id)
     if players:
         player = players[0]
-    elif message.author.id == WEBHOOK_BOT_ID or message.author.id == TEST_BOT_ID:
-        player = tgfp.find_players(player_email=ADMIN_EMAIL)[0]
+    elif message.author.id != WEBHOOK_BOT_ID and message.author.id != TEST_BOT_ID:
+        assert False
 
     logging.info("%s just asked for !TGFP This Week", player.nick_name)
     week_no = tgfp.current_active_week()
@@ -114,14 +114,13 @@ def this_week(message) -> str:
     output += "🏈   Game   | Pick |  Win (score)\n"
     output += "=================================\n"
     player_pick = tgfp.find_picks(player_id=player.id, week_no=week_no)[0]
+    wins = 0
+    losses = 0
+    potential_wins = 0
+    potential_losses = 0
     if not player_pick:
         output += "No picks yet"
     else:
-        wins = 0
-        losses = 0
-        pwins = 0
-        plosses = 0
-
         for game in games:
             road, home, pick, winner, road_score, home_score, icon = \
                 game_line_for_game(game, player_pick)
@@ -132,14 +131,14 @@ def this_week(message) -> str:
             if icon == '✅':
                 wins += 1
             if icon == '👍':
-                pwins += 1
+                potential_wins += 1
             if icon == '☠️':
                 losses += 1
             if icon == '🙏':
-                plosses += 1
+                potential_losses += 1
 
     output += f"\nRecord: ({wins}-{losses})\n"
-    output += f"Potential Record: ({wins + pwins}-{losses + plosses})\n"
+    output += f"Potential Record: ({wins + potential_wins}-{losses + potential_losses})\n"
     output += "=================================\n"
     output += "⚫ = Not Started\n👍 = In Progress (winning)\n🙏 =" +\
               " In Progress (losing)\n✅ = You Won\n☠️ = You Lost\n"

@@ -5,16 +5,14 @@ import logging
 import json
 from tgfp import TGFP
 import discord
-from discord import Guild
-
-# GUILD = os.getenv('DISCORD_DEV_GUILD')
+# from discord import Guild
 
 client = discord.Client()
 
 # TODO: replace this with `bot_send`
 
 
-class MessageData():
+class MessageData:
     """This class will contain all the data necessary to send the message."""
 
     # pylint: disable=too-few-public-methods
@@ -78,17 +76,18 @@ def embed_game_alert():
 @client.event
 async def on_ready():
     """ callback for when discord bot connects to the channel and is ready """
-    guild: Guild
-    for guild in client.guilds:
-        if guild.name == os.getenv('DISCORD_GUILD'):
-            break
-    channel = None
-    for channel in guild.channels:
-        if channel.name == "tgfp-bot-chat":
-            break
-    await channel.send(embed=embed_game_alert())
-    logging.debug("Sent Game Alert")
-    await client.close()
+    # TODO: This is wrong since it doesn't use 'guild' correctly
+    # guild: Guild
+    # for guild in client.guilds:
+    #     if guild.name == os.getenv('DISCORD_GUILD'):
+    #         break
+    # channel = None
+    # for channel in guild.channels:
+    #     if channel.name == "tgfp-bot-chat":
+    #         break
+    # await channel.send(embed=embed_game_alert())
+    # logging.debug("Sent Game Alert")
+    # await client.close()
 
 
 def alert_game_id_final(tgfp_game_id):
