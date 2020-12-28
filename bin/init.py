@@ -5,4 +5,5 @@ import common_init
 
 
 def get_settings():
+    """ Simply a wrapper for returning settings """
     return common_init.get_settings("../", __file__)
