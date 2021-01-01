@@ -1,0 +1,10 @@
+name: Lint Only
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Lint Check
+    runs-on: macos-11.0
+    steps:
+      - uses: lint@master
