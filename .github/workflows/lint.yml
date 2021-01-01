@@ -1,6 +1,7 @@
 name: Lint Only
 
-on: [pull_request]
+on:
+  workflow_dispatch:
 
 jobs:
   build:

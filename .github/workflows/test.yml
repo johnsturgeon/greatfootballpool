@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   build:
-    name: Lint Check
+    name: Included Lint Check
     runs-on: macos-11.0
     steps:
-      - uses: lint@master
+      - uses: ./.github/workflows/lint.yml@master
