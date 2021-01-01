@@ -8,7 +8,7 @@ import json
 from dateutil import parser
 
 
-class Yahoo():
+class Yahoo:
     """ The main class for interfacing with Yahoo's json for sports """
 
     def __init__(self, week_no):
@@ -37,15 +37,15 @@ class Yahoo():
                            }
             # pylint: disable=invalid-name
             # schedState matches the url variable
-            schedState = 2
+            schedule_state = 2
             # if we're in the playoffs, we need to bump the schedState variable to 3
             if self.week_no > 17:
-                schedState = 3
-            urlToQuery = 'http://sports.yahoo.com/nfl/scoreboard/?dateRange=%(week_no)d&' +\
+                schedule_state = 3
+            url_to_query = 'http://sports.yahoo.com/nfl/scoreboard/?dateRange=%(week_no)d&' +\
                 'dateRangeDisplay=%(week_no)d&schedState=%(schedState)d' % {
-                    'week_no': self.week_no, 'schedState': schedState
+                    'week_no': self.week_no, 'schedState': schedule_state
                 }
-            req = Request(urlToQuery, headers=all_headers)
+            req = Request(url_to_query, headers=all_headers)
             raw_game_data = urlopen(req).read().decode('utf-8')
             games_data = None
             for line in raw_game_data.splitlines():
@@ -57,9 +57,9 @@ class Yahoo():
                         with open('games_data.json', 'w') as outfile:
                             json.dump(games_data, outfile)
                     break
-            for gamekey in games_data:
-                if re.match(r'^nfl*', gamekey):
-                    self._games.append(YahooGame(self, game_data=games_data[gamekey]))
+            for game_key in games_data:
+                if re.match(r'^nfl*', game_key):
+                    self._games.append(YahooGame(self, game_data=games_data[game_key]))
 
         return self._games
 
@@ -92,10 +92,10 @@ class Yahoo():
 
                     break
             # print(json.dumps(teams_data))
-            for teamkey in teams_data:
-                if 'default_league' in teams_data[teamkey] and \
-                   teams_data[teamkey]['default_league'] == "nfl":
-                    self._teams.append(YahooTeam(self, team_data=teams_data[teamkey]))
+            for team_key in teams_data:
+                if 'default_league' in teams_data[team_key] and \
+                   teams_data[team_key]['default_league'] == "nfl":
+                    self._teams.append(YahooTeam(self, team_data=teams_data[team_key]))
 
         return self._teams
 
@@ -116,7 +116,7 @@ class Yahoo():
         return found_teams
 
 
-class YahooGame():
+class YahooGame:
     """ A single game from the Yahoo json """
     # pylint: disable=too-many-instance-attributes
 
@@ -166,7 +166,7 @@ class YahooGame():
         return average_spread
 
 
-class YahooTeam():
+class YahooTeam:
     """ The class that wraps the Yahoo JSON for each team """
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-few-public-methods
@@ -203,7 +203,7 @@ class YahooTeam():
         return found_team_id
 
 
-class YahooOdd():
+class YahooOdd:
     """ Wraps the yahoo json for each 'odd' (spread) """
     # pylint: disable=too-few-public-methods
 
