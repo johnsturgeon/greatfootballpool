@@ -8,4 +8,4 @@ jobs:
     runs-on: macos-11.0
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/workflows/lint.yml@master
+      - uses: ./.github/workflows/lint@master
