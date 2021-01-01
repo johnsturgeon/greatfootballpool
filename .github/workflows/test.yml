@@ -7,5 +7,7 @@ jobs:
     name: Included Lint Check
     runs-on: macos-11.0
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/workflows/lint@master
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+      - name: Run external lint action
+        uses: ./.github/actions/lint
