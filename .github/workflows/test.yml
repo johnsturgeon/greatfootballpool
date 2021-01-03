@@ -9,5 +9,5 @@ jobs:
     steps:
       - name: Check Out Repository
         uses: actions/checkout@v2
-      - name: Run external lint action
-        uses: ./.github/actions/lint
+      - name: Run my own lint action
+        uses: ./.github/actions/pip_install
