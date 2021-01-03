@@ -99,6 +99,18 @@ jobs:
         user: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
         pass: ${{ secrets.PROD_WEB_SERVER_PASSWORD }}
 
+    - name: Rsync lib folder to production
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_WEB_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_WEB_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_WEB_SERVER_HOME }}/lib/
+
+        VERBOSE: true
+        USER: ${{ secrets.PROD_WEB_SERVER_USERNAME }}
+        ARGS: -avz
+        SOURCE: ./lib/
+
     - name: Rsync flask site to production
       uses: up9cloud/action-rsync@master
       env:
