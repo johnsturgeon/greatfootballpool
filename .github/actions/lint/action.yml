@@ -10,7 +10,12 @@ runs:
   steps:
     - name: Install dependencies
       run: |
+        echo "Before CD"
+        pwd
+        echo ${{ github.workspace }}
         cd ${{ github.workspace }}
+        echo "After CD"
+        pwd
         python -m venv env
         source env/bin/activate
         pip install --upgrade pip
@@ -20,14 +25,14 @@ runs:
       run: echo ${{ inputs.settings_json }}
       shell: bash
     - name: Test for echo
-      run: echo "This is just a test"
+      run: echo "Github Workspace ${{ github.workspace }}"
       shell: bash
-#    - name: Install config file
-#      run: |
-#        cat << EOF > ${{ github.workspace }}/conf/settings.json
-#        ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
-#        EOF
-#      shell: bash
+    - name: Install config file
+      run: |
+        cat << EOF > ${{ github.workspace }}/conf/settings.json
+        ${{ inputs.settings_json }}
+        EOF
+      shell: bash
     - name: Copy *.pth into site packages
       run: |
         cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
