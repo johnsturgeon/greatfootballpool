@@ -23,9 +23,9 @@ runs:
       shell: bash
     - name: Lint with pylint
       run: |
-        env/bin/python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+        env/bin/python -m pylint --rcfile .pylintrc bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
       shell: bash
     - name: Check code with flake8
       run: |
-        env/bin/python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
+        env/bin/python -m flake8 --config .flake8 bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
       shell: bash
