@@ -3,7 +3,7 @@ description: 'Lint the Great Football Pool'
 runs:
   using: "composite"
   steps:
-    - name: 'Install dependencies'
+    - name: Install dependencies
       run: |
         cd ${{ github.workspace }}
         python -m venv env
