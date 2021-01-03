@@ -10,4 +10,4 @@ jobs:
       - name: Check Out Repository
         uses: actions/checkout@v2
       - name: Run my own lint action
-        uses: ./.github/actions/pip_install
+        uses: ./.github/actions/lint

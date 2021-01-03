@@ -1,32 +1,31 @@
 name: 'Lint Action'
 description: 'Lint the Great Football Pool'
-
 runs:
-  using: composite
+  using: "composite"
   steps:
-#    - name: Set up Python 3.9
-#      uses: actions/setup-python@v1
-#        with:
-#          python-version: 3.9
-#      - name: Install dependencies
     - name: 'Install dependencies'
-    - run: cd ${{ github.workspace }} \
+      run: |
+        cd ${{ github.workspace }}
         python -m venv env
         source env/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+      shell: bash
     - name: Install config file
       run: |
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
         EOF
-
+      shell: bash
     - name: Copy *.pth into site packages
       run: |
         cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
+      shell: bash
     - name: Lint with pylint
       run: |
         env/bin/python -m pylint --rcfile .pylintrc bin/*.py flask_site/include/*.py
+      shell: bash
     - name: Check code with flake8
       run: |
         env/bin/python -m flake8 --config .flake8 bin/*.py flask_site/include/*.py
+      shell: bash
