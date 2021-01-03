@@ -21,12 +21,6 @@ runs:
         pip install --upgrade pip
         pip install -r requirements.txt
       shell: bash
-    - name: Test Inputs
-      run: echo ${{ inputs.settings_json }}
-      shell: bash
-    - name: Test for echo
-      run: echo "Github Workspace ${{ github.workspace }}"
-      shell: bash
     - name: Install config file
       run: |
         cat << EOF > ${{ github.workspace }}/conf/settings.json
