@@ -15,3 +15,5 @@ jobs:
           python-version: 3.9
       - name: Run my own lint action
         uses: ./.github/actions/lint
+        with:
+          settings_json: ${{ secrets.PROD_SERVER_SETTINGS_JSON }}

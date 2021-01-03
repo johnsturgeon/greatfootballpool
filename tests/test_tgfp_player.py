@@ -37,6 +37,7 @@ def tgfp_db_reg_season_in_pregame(tgfp_db):
     last_game.game_status = 'pregame'
     return tgfp_db
 
+
 # pylint: disable=missing-function-docstring
 @pytest.fixture()
 def player(tgfp_db):

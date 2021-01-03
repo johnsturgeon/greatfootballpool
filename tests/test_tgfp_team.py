@@ -19,6 +19,7 @@ def tgfp_db():
     """
     return TGFP(load_test_fixture=True)
 
+
 # pylint: disable=missing-function-docstring
 def test_team(tgfp_db):
     teams = tgfp_db.teams()

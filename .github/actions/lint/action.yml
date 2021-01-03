@@ -1,5 +1,10 @@
 name: 'Lint Action'
 description: 'Lint the Great Football Pool'
+inputs:
+  settings_json:
+    description: "Text blob containing the json for the settings"
+    required: false
+    default: '{"hello world": 1}'
 runs:
   using: "composite"
   steps:
@@ -10,6 +15,9 @@ runs:
         source env/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+      shell: bash
+    - name: Test Inputs
+      run: echo ${{ github.event.inputs.settings_json }}
       shell: bash
 #    - name: Install config file
 #      run: |
