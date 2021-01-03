@@ -119,3 +119,14 @@ jobs:
         USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
         ARGS: -avz --delete
         SOURCE: ./bin/
+
+    - name: Rsync bin to bin_bot production
+      uses: up9cloud/action-rsync@master
+      env:
+        HOST: ${{ secrets.PROD_BOT_SERVER_HOST }}
+        KEY: ${{ secrets.PROD_BOT_SERVER_PRIVATE_KEY }}
+        TARGET: ${{ secrets.PROD_BOT_SERVER_HOME }}/lib/
+        VERBOSE: true
+        USER: ${{ secrets.PROD_BOT_SERVER_USERNAME }}
+        ARGS: -avz --delete
+        SOURCE: ./lib/
