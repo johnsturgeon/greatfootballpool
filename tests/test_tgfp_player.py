@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 """Unit Test wrapper for discord_bot_tester.py"""
-import init
 import math
-from bson import ObjectId  # noqa: E402
+import init
 
 settings = init.get_settings()
 
 # pylint: disable=wrong-import-position
 import pytest  # noqa E402
-from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer  # noqa E402
-from yahoo import Yahoo  # noqa E402
-from bson import ObjectId  # noqa: E402
+from tgfp import TGFP, TGFPPick, TGFPPlayer  # noqa E402
 # pylint: disable=redefined-outer-name
 
 
@@ -40,7 +37,7 @@ def tgfp_db_reg_season_in_pregame(tgfp_db):
     last_game.game_status = 'pregame'
     return tgfp_db
 
-
+# pylint: disable=missing-function-docstring
 @pytest.fixture()
 def player(tgfp_db):
     players = tgfp_db.players()
@@ -69,14 +66,14 @@ def test_player_win_csv(player: TGFPPlayer):
     assert ',' in csv
     split_csv = csv.split(',')
     # check that the number of fields equal the number of weeks that there are picks
-    total_wins = 0
     week_number = 0
     final_week_total = 0
     for week_total in split_csv:
         if week_total != 'John':
             int_week_total = int(week_total)
             week_number += 1
-            assert int_week_total == player.wins(week_through=week_number) + player.bonus(week_through=week_number)
+            assert int_week_total == player.wins(week_through=week_number) +\
+                   player.bonus(week_through=week_number)
             final_week_total = int_week_total
     assert final_week_total == player.wins() + player.bonus()
 
@@ -106,16 +103,20 @@ def test_player_name(player: TGFPPlayer):
     assert player.full_name() == "John Sturgeon"
 
 
-def test_player_winning_pct(tgfp_db: TGFP, player: TGFPPlayer, player_inactive: TGFPPlayer):
+def test_player_winning_pct(player: TGFPPlayer, player_inactive: TGFPPlayer):
     total_games = player.wins() + player.losses()
     win_percent = player.wins() / total_games
     assert math.isclose(win_percent, player.winning_pct(), abs_tol=0.00001)
     assert player_inactive.winning_pct() == 0
 
 
-def test_player_this_weeks_picks(tgfp_db_reg_season_in_pregame: TGFP, player: TGFPPlayer, player_inactive: TGFPPlayer):
+def test_player_this_weeks_picks(
+        tgfp_db_reg_season_in_pregame: TGFP,
+        player: TGFPPlayer,
+        player_inactive: TGFPPlayer
+):
     this_weeks_pick = player.this_weeks_picks()
-    assert type(this_weeks_pick) is TGFPPick
+    assert isinstance(this_weeks_pick, TGFPPick)
     assert player_inactive.this_weeks_picks() is None
     this_weeks_picks: TGFPPick
     this_weeks_picks = player.this_weeks_picks()
@@ -137,4 +138,3 @@ def test_player_save(player: TGFPPlayer):
     assert new_player.first_name == "Juan"
     new_player.first_name = "John"
     new_player.save()
-

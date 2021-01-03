@@ -1,3 +1,4 @@
+"""Unit Test  for TGFPPick class"""
 import init
 
 settings = init.get_settings()
@@ -21,6 +22,7 @@ def tgfp_db() -> TGFP:
     return TGFP(load_test_fixture=True)
 
 
+# pylint: disable=missing-function-docstring
 @pytest.fixture
 def pick(tgfp_db, request: FixtureRequest) -> TGFPPick:
     pick: TGFPPick = tgfp_db.picks()[0]
@@ -43,8 +45,11 @@ def test_pick_init():
 
 
 def test_winner_for_game_id(pick):
-    assert pick.winner_for_game_id(ObjectId('5d6fcc5fd4fa6803c6505831')) == ObjectId('59ac8d38ee45e20848e11a6b')
-    assert pick.winner_for_game_id(ObjectId('5d827532dd2d55018d8d756b')) is None
+    game_id = ObjectId('5d6fcc5fd4fa6803c6505831')
+    winner_id = ObjectId('59ac8d38ee45e20848e11a6b')
+    bogus_game_id = ObjectId('5d827532dd2d55018d8d756b')
+    assert pick.winner_for_game_id(game_id) == winner_id
+    assert pick.winner_for_game_id(bogus_game_id) is None
 
 
 def test_save(pick):

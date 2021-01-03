@@ -266,4 +266,3 @@ def test_find_games_2(tgfp_db_reg_season_b):
     assert len(found_games) == 1
     assert found_games[0].game_status == 'in progress'
     assert found_games[0].yahoo_game_id == 'nfl.g.20191229030'
-
