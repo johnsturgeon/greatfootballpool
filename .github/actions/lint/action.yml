@@ -19,6 +19,9 @@ runs:
     - name: Test Inputs
       run: echo ${{ github.event.inputs.settings_json }}
       shell: bash
+    - name: Test for echo
+      run: echo "This is just a test"
+      shell: bash
 #    - name: Install config file
 #      run: |
 #        cat << EOF > ${{ github.workspace }}/conf/settings.json
