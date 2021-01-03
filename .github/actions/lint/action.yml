@@ -3,19 +3,14 @@ description: 'Lint the Great Football Pool'
 inputs:
   settings_json:
     description: "Text blob containing the json for the settings"
-    required: false
-    default: '{"hello world": 1}'
+    required: true
 runs:
   using: "composite"
   steps:
     - name: Install dependencies
       run: |
-        echo "Before CD"
-        pwd
-        echo ${{ github.workspace }}
+        echo "Installing Dependencies"
         cd ${{ github.workspace }}
-        echo "After CD"
-        pwd
         python -m venv env
         source env/bin/activate
         pip install --upgrade pip
@@ -23,19 +18,23 @@ runs:
       shell: bash
     - name: Install config file
       run: |
+        echo "Creating settings.json"
         cat << EOF > ${{ github.workspace }}/conf/settings.json
         ${{ inputs.settings_json }}
         EOF
       shell: bash
     - name: Copy *.pth into site packages
       run: |
+        echo "Copying tgfp_paths.pth file"
         cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
       shell: bash
     - name: Lint with pylint
       run: |
+        echo "Linting with pylint"
         env/bin/python -m pylint --rcfile .pylintrc bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
       shell: bash
     - name: Check code with flake8
       run: |
+        echo "Linting with flake8"
         env/bin/python -m flake8 --config .flake8 bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
       shell: bash
