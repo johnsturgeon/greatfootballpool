@@ -16,4 +16,4 @@ jobs:
       - name: Run my own lint action
         uses: ./.github/actions/lint
         with:
-          settings_json: ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+          settings_json: "This is a passed input parameter"
