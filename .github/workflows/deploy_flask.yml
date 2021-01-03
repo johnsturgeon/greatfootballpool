@@ -8,6 +8,12 @@ jobs:
     name: Run my own lint action
     runs-on: ubuntu-latest
     steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
       - name: Lint Check
         uses: ./.github/actions/lint
         with:
