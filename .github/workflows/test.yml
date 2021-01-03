@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   build:
     name: Included Lint Check
-    runs-on: macos-11.0
+    runs-on: ubuntu-latest
     steps:
       - name: Check Out Repository
         uses: actions/checkout@v2
