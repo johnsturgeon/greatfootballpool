@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """ This script will back up the mongo database to a folder in the settings """
+import subprocess  # noqa E402
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
-import subprocess  # noqa E402
 
 
 def restart():
+    """ Restarts the discord bot. """
     try:
         subprocess.call(
             [

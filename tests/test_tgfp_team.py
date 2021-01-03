@@ -5,9 +5,7 @@ settings = init.get_settings()
 
 # pylint: disable=wrong-import-position
 import pytest  # noqa E402
-from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer  # noqa E402
-from yahoo import Yahoo  # noqa E402
-from bson import ObjectId  # noqa: E402
+from tgfp import TGFP, TGFPTeam  # noqa E402
 # pylint: disable=redefined-outer-name
 
 
@@ -22,6 +20,7 @@ def tgfp_db():
     return TGFP(load_test_fixture=True)
 
 
+# pylint: disable=missing-function-docstring
 def test_team(tgfp_db):
     teams = tgfp_db.teams()
     assert len(teams) == 32
@@ -38,5 +37,3 @@ def test_team(tgfp_db):
     assert team_1_new.wins == 5
     team_1_new.wins = 4
     team_1_new.save()
-
-

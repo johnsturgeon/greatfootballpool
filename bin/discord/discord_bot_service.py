@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Discord bot runs in the background and handles all requests to discord."""
+import logging  # noqa E402
 from init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
-import logging  # noqa E402
 from tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer  # noqa E402
 import discord  # noqa E402
 

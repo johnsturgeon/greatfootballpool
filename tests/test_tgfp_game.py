@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 """Unit Test wrapper for discord_bot_tester.py"""
+from datetime import datetime  # noqa E402
 import init
 
 settings = init.get_settings()
 
 # pylint: disable=wrong-import-position
 import pytest  # noqa E402
-from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer  # noqa E402
-from yahoo import Yahoo  # noqa E402
+from tgfp import TGFP, TGFPGame, TGFPTeam  # noqa E402
 from bson import ObjectId
-import pytz  # noqa E402
-from datetime import datetime  # noqa E402
 
 
 # pylint: disable=redefined-outer-name
@@ -27,6 +25,7 @@ def tgfp_db():
     return TGFP(load_test_fixture=True)
 
 
+# pylint: disable=missing-function-docstring
 @pytest.fixture
 def game(tgfp_db: TGFP) -> TGFPGame:
     return tgfp_db.games()[0]
@@ -61,6 +60,7 @@ def test_game_save(game: TGFPGame):
     newer_game.save()
 
 
+# noinspection DuplicatedCode
 def test_winner_id_of_game(game: TGFPGame):
     home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
     road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')
@@ -75,6 +75,7 @@ def test_winner_id_of_game(game: TGFPGame):
     assert game.winner_id_of_game is None
 
 
+# noinspection DuplicatedCode
 def test_leader_id_of_game(game: TGFPGame):
     home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
     road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')
@@ -89,6 +90,7 @@ def test_leader_id_of_game(game: TGFPGame):
     assert game.leader_id_of_game == home_team_id
 
 
+# noinspection DuplicatedCode
 def test_loser_id_of_game(game: TGFPGame):
     home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
     road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')

@@ -7,9 +7,10 @@ import discord  # noqa E402
 
 
 def send_message(message):
-
+    """Sends a message to the discord channel"""
     client = discord.Client()
 
+    # pylint: disable=unused-variable
     @client.event
     async def on_ready():
         channel = client.get_channel(channel_id)
