@@ -11,12 +11,12 @@ runs:
         pip install --upgrade pip
         pip install -r requirements.txt
       shell: bash
-    - name: Install config file
-      run: |
-        cat << EOF > ${{ github.workspace }}/conf/settings.json
-        ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
-        EOF
-      shell: bash
+#    - name: Install config file
+#      run: |
+#        cat << EOF > ${{ github.workspace }}/conf/settings.json
+#        ${{ secrets.PROD_SERVER_SETTINGS_JSON }}
+#        EOF
+#      shell: bash
     - name: Copy *.pth into site packages
       run: |
         cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
