@@ -2,7 +2,7 @@
   This module contains all of the necessary functions for interfacing with
   the the great football pool mongo database
 """
-from init import get_settings
+from common_init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
 # pylint: disable=C0411

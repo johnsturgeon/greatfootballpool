@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 """Unit Test wrapper for discord_bot_tester.py"""
-import init
-settings = init.get_settings()
+from common_init import get_settings
+settings = get_settings()
 # pylint: disable=wrong-import-position
 import bot_send as discord_bot
 

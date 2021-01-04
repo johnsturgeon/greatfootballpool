@@ -1,6 +1,5 @@
-#!/usr/bin/python
 """Discord bot runs in the background and handles all requests to discord."""
-from init import get_settings
+from common_init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
 # pylint: disable=wrong-import-order

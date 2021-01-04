@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 """This is a 'do everything' script for updating the scores in mongo."""
-from init import get_settings
+from common_init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
 from update_scores import main as update_scores  # noqa E402

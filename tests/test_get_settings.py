@@ -1,6 +1,5 @@
-#!../env/bin/python
 """Unit Tests for get_settings.py"""
-from init import get_settings
+from common_init import get_settings
 
 
 def test_get_settings():

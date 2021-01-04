@@ -1,4 +1,3 @@
-#!../env/bin/python
 """ Unit Tests for mongo_backup.py """
 import mongo_backup
 import pytest

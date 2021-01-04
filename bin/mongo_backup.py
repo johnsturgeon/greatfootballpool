@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 """ This script will back up the mongo database to a folder in the settings """
-from init import get_settings
+from common_init import get_settings
 settings = get_settings()
 # pylint: disable=wrong-import-position
 # pylint: disable=C0411
