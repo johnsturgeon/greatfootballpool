@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 """ This file will update all the scores in the mongo DB for the great football pool """
 import pprint
-import init
-settings = init.get_settings()
+from common_init import get_settings
+settings = get_settings()
 # pylint: disable=wrong-import-position
 from yahoo import Yahoo  # noqa E402
 from tgfp import TGFP  # noqa E402

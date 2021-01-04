@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 """Unit Test wrapper for discord_bot_tester.py"""
 from datetime import datetime  # noqa E402
-import init
+from common_init import get_settings
 
-settings = init.get_settings()
+settings = get_settings()
 
 # pylint: disable=wrong-import-position
 import pytest  # noqa E402

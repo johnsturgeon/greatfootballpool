@@ -1,8 +1,8 @@
-#!/usr/bin/env python
 """Unit Test wrapper for discord_bot_tester.py"""
 import os
-import init
-settings = init.get_settings()
+import sys
+from common_init import get_settings
+settings = get_settings()
 discord_bot_user_id = settings['discord']['discord_bot_user_id']
 test_token = settings['discord']['test_token']
 bot_chat_channel_id = settings['discord']['bot_chat_channel_id']
@@ -17,8 +17,10 @@ def get_command(bot_test_to_run="all"):
     :return: Full path to the command to run
     :rtype: str
     """
+    interp = sys.executable
     dirname = os.path.dirname(os.path.abspath(__file__))
-    full_path = f"{dirname}/discord_bot_tester.py"
+    full_path = interp
+    full_path += f" {dirname}/discord_bot_tester.py"
     full_path += f" {discord_bot_user_id} {test_token} -c {bot_chat_channel_id}"
     full_path += f" -r {bot_test_to_run}"
     return full_path

@@ -1,4 +1,3 @@
-#!../env/bin/python
 """Discord bot runs in the background and handles all requests to discord."""
 import os
 import logging

@@ -1,7 +1,7 @@
 """Unit Test  for TGFPPick class"""
-import init
+from common_init import get_settings
 
-settings = init.get_settings()
+settings = get_settings()
 
 # pylint: disable=wrong-import-position
 import pytest

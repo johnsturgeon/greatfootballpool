@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 A functional demo of all possible test cases. This is the format you will want to use with your
 testing bot.
@@ -7,8 +6,8 @@ testing bot.
         python example_tests.py TARGET_NAME TESTER_TOKEN
 """
 import sys
-import init
-settings = init.get_settings()
+from common_init import  get_settings
+settings = get_settings()
 
 # pylint: disable=wrong-import-position
 from distest import TestCollector  # noqa E402

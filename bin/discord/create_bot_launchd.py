@@ -1,17 +1,12 @@
-#!../env/bin/python
-# TODO: Rewrite this so that it uses the new shebang
 """ This script will create the launchd plist for the bot, and run it """
 import plistlib
 import os
 import shutil
-import json
 from os.path import expanduser
+from common_init import get_settings
 
-# pylint: disable=duplicate-code
 dirname = os.path.dirname(os.path.abspath(__file__))
-conf_path = os.path.normpath(os.path.join(dirname, '../conf/settings.json'))
-with open(conf_path) as config_file:
-    settings = json.load(config_file)
+settings = get_settings()
 
 os.chdir(dirname)
 
