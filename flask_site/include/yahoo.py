@@ -54,8 +54,11 @@ class Yahoo:
                     all_data = json.loads(split_line)
                     games_data = all_data['context']['dispatcher']['stores']['GamesStore']['games']
                     if self.debug:
-                        with open('games_data.json', 'w') as outfile:
-                            json.dump(games_data, outfile)
+                        try:
+                            with open('games_data.json', 'w') as outfile:
+                                json.dump(games_data, outfile)
+                        except IOError:
+                            print('could not write games data to json')
                     break
             for game_key in games_data:
                 if re.match(r'^nfl*', game_key):
@@ -87,9 +90,11 @@ class Yahoo:
                     all_data = json.loads(split_line)
                     teams_data = all_data['context']['dispatcher']['stores']['TeamsStore']['teams']
                     if self.debug:
-                        with open('team_data.json', 'w') as outfile:
-                            json.dump(teams_data, outfile)
-
+                        try:
+                            with open('team_data.json', 'w') as outfile:
+                                json.dump(teams_data, outfile)
+                        except IOError:
+                            print('could not write team data to json file')
                     break
             # print(json.dumps(teams_data))
             for team_key in teams_data:
