@@ -16,6 +16,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 # pylint: disable=missing-function-docstring
+# pylint: disable=too-many-instance-attributes
 class TGFP():
     """
     Main class for the great football pool
@@ -23,7 +24,6 @@ class TGFP():
 
     PRO_BOWL_WEEK = 21
 
-    # pylint: disable=too-many-instance-attributes
     def __init__(self, load_test_fixture=False):
         # traceback.print_stack(file=sys.stdout)
         self.init_ivars()
