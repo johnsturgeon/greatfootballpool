@@ -21,6 +21,8 @@ class TGFP():
     Main class for the great football pool
     """
 
+    PRO_BOWL_WEEK = 21
+
     # pylint: disable=too-many-instance-attributes
     def __init__(self, load_test_fixture=False):
         # traceback.print_stack(file=sys.stdout)
@@ -93,6 +95,9 @@ class TGFP():
             current_week = game.week_no + 1
         else:
             current_week = game.week_no
+
+        if current_week == self.PRO_BOWL_WEEK:
+            current_week += 1
 
         return current_week
 
