@@ -1,26 +1,20 @@
 """Discord bot runs in the background and handles all requests to discord."""
-import logging  # noqa E402
-from common_init import get_settings
-settings = get_settings()
-# pylint: disable=wrong-import-position
-from tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer  # noqa E402
-import discord  # noqa E402
+import os
+import logging
+import discord
+from include.tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer
+from instance.config import get_config
 
-TOKEN = settings['discord']['token']
-GUILD = settings['discord']['guild']
-LOG_DIR = settings['config']['log_dir']
-WEBHOOK_BOT_ID = settings['discord']['webhook_bot_id']
-ADMIN_EMAIL = settings['discord']['admin_email']
-TEST_BOT_ID = settings['discord']['test_bot_user_id']
+config = get_config(os.getenv('FLASK_ENV'))
+logger = config.logger(os.path.basename(__file__))
+
+TOKEN = config.DISCORD_TOKEN
+GUILD = config.DISCORD_GUILD
+WEBHOOK_BOT_ID = config.DISCORD_WEBHOOK_BOT_ID
+ADMIN_EMAIL = config.DISCORD_ADMIN_EMAIL
 
 client = discord.Client()
 tgfp = TGFP()
-
-
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename=f"{LOG_DIR}/discord_bot_service.log",
-                    filemode='w')
 
 
 def game_line_for_game(tgfp_game: TGFPGame, player_pick: TGFPPick):
@@ -60,13 +54,14 @@ def game_line_for_game(tgfp_game: TGFPGame, player_pick: TGFPPick):
         winning_team = None
         icon = '⚫️'
 
-    return road_team.short_name,\
-        home_team.short_name,\
-        player_win_team.short_name,\
-        winning_team,\
-        tgfp_game.road_team_score,\
-        tgfp_game.home_team_score,\
+    return [
+        road_team.short_name,
+        home_team.short_name,
+        player_win_team.short_name,
+        winning_team,tgfp_game.road_team_score,
+        tgfp_game.home_team_score,
         icon
+    ]
 
 
 def help_message():
@@ -102,7 +97,7 @@ def this_week(message) -> str:
     players = tgfp.find_players(discord_id=message.author.id)
     if players:
         player = players[0]
-    elif message.author.id != WEBHOOK_BOT_ID and message.author.id != TEST_BOT_ID:
+    elif message.author.id != WEBHOOK_BOT_ID:
         assert False
 
     logging.info("%s just asked for !TGFP This Week", player.nick_name)
@@ -139,7 +134,7 @@ def this_week(message) -> str:
     output += f"\nRecord: ({wins}-{losses})\n"
     output += f"Potential Record: ({wins + potential_wins}-{losses + potential_losses})\n"
     output += "=================================\n"
-    output += "⚫ = Not Started\n👍 = In Progress (winning)\n🙏 =" +\
+    output += "⚫ = Not Started\n👍 = In Progress (winning)\n🙏 =" + \
               " In Progress (losing)\n✅ = You Won\n☠️ = You Lost\n"
     output += "```\n"
     logging.info('Sending Results for !TGFP This Week to %s', {player.nick_name})
@@ -192,7 +187,7 @@ async def on_message(message):
         for player in active_players:
             games_back = active_players[0].total_points() - player.total_points()
             player_record = \
-                f"{player.nick_name:<{name_len}}|{player.wins():^5}|" +\
+                f"{player.nick_name:<{name_len}}|{player.wins():^5}|" + \
                 f"{player.losses():^5}|{player.bonus():^5}|{games_back:>3}\n"
             output += player_record
 
@@ -208,5 +203,6 @@ async def on_message(message):
 
     if message.content == '!TGFP Test':
         await message.channel.send(test_message())
+
 
 client.run(TOKEN)

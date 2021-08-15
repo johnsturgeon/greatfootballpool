@@ -1,8 +1,9 @@
 """Discord bot runs in the background and handles all requests to discord."""
+import dataclasses
 import os
 import logging
 import json
-from tgfp import TGFP
+from include.tgfp import TGFP
 import discord
 
 client = discord.Client()
@@ -10,21 +11,10 @@ client = discord.Client()
 # TODO: replace this with `bot_send`
 
 
+@dataclass
 class MessageData:
     """This class will contain all the data necessary to send the message."""
-
-    # pylint: disable=too-few-public-methods
-    # pylint: disable=missing-function-docstring
-    def __init__(self):
-        self.__game_id = None
-
-    @property
-    def game_id(self):
-        return self.__game_id
-
-    @game_id.setter
-    def game_id(self, game_id):
-        self.__game_id = game_id
+    game_id: str
 
 
 message_data = MessageData()
@@ -77,7 +67,7 @@ async def on_ready():
     # TODO: This is wrong since it doesn't use 'guild' correctly
     # guild: Guild
     # for guild in client.guilds:
-    #     if guild.name == os.getenv('DISCORD_GUILD'):
+    #     if guild.name == config.DISCORD_GUILD
     #         break
     # channel = None
     # for channel in guild.channels:

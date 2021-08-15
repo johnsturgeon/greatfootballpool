@@ -5,7 +5,6 @@ settings = get_settings()
 from update_scores import main as update_scores  # noqa E402
 from mongo_backup import main as backup_db  # noqa E402
 from update_win_loss import main as update_win_loss  # noqa E402
-from bot_launchd_helper import restart  # noqa E402
 
 
 def main():

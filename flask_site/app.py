@@ -27,8 +27,8 @@ if DEBUG:
     print("DEBUG MODE")
     from flask_profile import Profiler
 
-application = Flask(__name__)
-application.secret_key = os.getenv('FLASK_APP_SECRET_KEY')
+app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_APP_SECRET_KEY')
 
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN'),
@@ -37,8 +37,8 @@ sentry_sdk.init(
 )
 
 if DEBUG:
-    Profiler(application)
-    application.config["flask_profiler"] = {
+    Profiler(app)
+    app.config["flask_profiler"] = {
         "storage": {
             "engine": "mongodb",
         },
@@ -46,7 +46,7 @@ if DEBUG:
     }
 
 
-@application.before_request
+@app.before_request
 def before_request():
     """ This runs before every single request to make sure the user is logged in """
     if os.path.exists("maintenance"):
@@ -59,13 +59,13 @@ def before_request():
         g.tgfp = tgfp
 
 
-@application.route('/')
+@app.route('/')
 def index():
     """ default route / -> home """
     return redirect(url_for('home'))
 
 
-@application.route('/home')
+@app.route('/home')
 def home():
     """ Home page route for the football pool """
     if 'player_name' not in session:
@@ -75,7 +75,7 @@ def home():
     return render_template('home.j2', home_page_text=g.tgfp.home_page_text())
 
 
-@application.route('/picks')
+@app.route('/picks')
 def picks():
     """ Picks page route """
     if 'player_name' not in session:
@@ -124,7 +124,7 @@ def picks():
 
 
 # pylint: disable=too-many-locals
-@application.route('/picks_form', methods=['POST'])
+@app.route('/picks_form', methods=['POST'])
 def picks_form():
     """ This is the form route that handles processing the form data from the picks page """
     tgfp = g.tgfp
@@ -181,8 +181,8 @@ def picks_form():
 # pylint: enable=too-many-locals
 
 
-@application.route('/allpicks', defaults={'week_no': None})
-@application.route('/allpicks/<int:week_no>')
+@app.route('/allpicks', defaults={'week_no': None})
+@app.route('/allpicks/<int:week_no>')
 def allpicks(week_no=None):
     """ route for the 'allpicks' page """
     tgfp = g.tgfp
@@ -209,7 +209,7 @@ def allpicks(week_no=None):
         week_no=picks_week_no)
 
 
-@application.route('/standings')
+@app.route('/standings')
 def standings():
     """ route for the 'standings' page """
     if 'player_name' not in session:
@@ -226,17 +226,17 @@ def standings():
 
 
 # pylint: disable=missing-function-docstring
-@application.route('/rules')
+@app.route('/rules')
 def rules():
     return render_template('rules.j2')
 
 
-@application.route('/picks_form_static')
+@app.route('/picks_form_static')
 def picks_form_static():
     return render_template('picks_form.j2')
 
 
-@application.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if 'player_name' in session:
         return redirect(url_for('home'))
@@ -263,16 +263,16 @@ def login():
     return redirect(url_for('home'))
 
 
-@application.route('/logout')
+@app.route('/logout')
 def logout():
     session.clear()
     g.current_week = None
     g.tgfp = None
-    application.secret_key = os.urandom(32)
+    app.secret_key = os.urandom(32)
     return redirect(url_for('home'))
 
 
-@application.errorhandler(503)
+@app.errorhandler(503)
 def error_503(error):
     # pylint: disable=unused-argument
     assert error
