@@ -31,10 +31,10 @@ runs:
     - name: Lint with pylint
       run: |
         echo "Linting with pylint"
-        env/bin/python -m pylint --rcfile .pylintrc bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
+        env/bin/python -m pylint --rcfile .pylintrc bin/*.py bin/discord/*.py flask_site/include/*.py
       shell: bash
     - name: Check code with flake8
       run: |
         echo "Linting with flake8"
-        env/bin/python -m flake8 --config .flake8 bin/*.py bin/discord/*.py bin/healthchecks/*.py flask_site/include/*.py
+        env/bin/python -m flake8 --config .flake8 bin/*.py bin/discord/*.py flask_site/include/*.py
       shell: bash
