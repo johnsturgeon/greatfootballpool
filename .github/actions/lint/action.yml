@@ -16,18 +16,6 @@ runs:
         pip install --upgrade pip
         pip install -r requirements.txt
       shell: bash
-    - name: Install config file
-      run: |
-        echo "Creating settings.json"
-        cat << EOF > ${{ github.workspace }}/conf/settings.json
-        ${{ inputs.settings_json }}
-        EOF
-      shell: bash
-    - name: Copy *.pth into site packages
-      run: |
-        echo "Copying tgfp_paths.pth file"
-        cp ${{ github.workspace }}/conf/tgfp_paths.pth env/lib/python3.*/site-packages
-      shell: bash
     - name: Lint with pylint
       run: |
         echo "Linting with pylint"
