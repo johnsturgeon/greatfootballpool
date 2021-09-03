@@ -1,49 +1,28 @@
-""" Passenger wsgi file, this is the main 'routing' logic for
-    The Great Football Pool website
-"""
+""" app file for The Great Football Pool website """
 import os
-import sys
-dirname = os.path.dirname(os.path.abspath(__file__))
-DOT_ENV_PATH = os.path.normpath(os.path.join(dirname, '../conf/.env'))
-INTERP = os.path.normpath(os.path.join(dirname, '../env/bin/python'))
+import sentry_sdk
+from flask import Flask, session, request, abort
+from flask import render_template, redirect, url_for, g
+from sentry_sdk.integrations.flask import FlaskIntegration
+from bson import ObjectId
+from include.tgfp import TGFP, TGFPPick
+from instance.config import get_config
 
-if sys.executable != INTERP:
-    os.execl(INTERP, INTERP, *sys.argv)
-# pylint: disable=wrong-import-position
-import sentry_sdk  # noqa: E402
-from flask import Flask, session, request, abort  # noqa: E402
-from flask import render_template, redirect, url_for, g  # noqa: E402
-from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: E402
-from bson import ObjectId  # noqa: E402
-from tgfp import TGFP, TGFPPick  # noqa: E402
-from dotenv import load_dotenv  # noqa: E402
+flask_env = os.getenv('FLASK_ENV')
+config = get_config(flask_env)
+logger = config.logger(os.path.basename(__file__))
 
-load_dotenv(dotenv_path=DOT_ENV_PATH)
-
-DEBUG = bool(os.getenv('DEBUG'))
-LOGGING_DIR = os.getenv('LOGGING_DIR')
-
-if DEBUG:
-    print("DEBUG MODE")
-    from flask_profile import Profiler
+DEBUG = flask_env.lower() != 'production'
 
 app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_APP_SECRET_KEY')
+app.secret_key = config.SECRET_KEY
 
+# pylint: disable=abstract-class-instantiated
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN'),
     integrations=[FlaskIntegration()],
     traces_sample_rate=0.0
 )
-
-if DEBUG:
-    Profiler(app)
-    app.config["flask_profiler"] = {
-        "storage": {
-            "engine": "mongodb",
-        },
-        "profile_dir": LOGGING_DIR
-    }
 
 
 @app.before_request
@@ -55,6 +34,7 @@ def before_request():
         tgfp = None
         if not hasattr(g, 'tgfp'):
             tgfp = TGFP()
+        # pylint: disable=assigning-non-slot
         g.current_week = tgfp.current_week()
         g.tgfp = tgfp
 
@@ -266,6 +246,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
+    # pylint: disable=assigning-non-slot
     g.current_week = None
     g.tgfp = None
     app.secret_key = os.urandom(32)

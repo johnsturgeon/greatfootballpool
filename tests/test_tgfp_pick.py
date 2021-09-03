@@ -1,16 +1,11 @@
 """Unit Test  for TGFPPick class"""
-from common_init import get_settings
-
-settings = get_settings()
-
-# pylint: disable=wrong-import-position
 import pytest
 from pytest import FixtureRequest
-from tgfp import TGFP, TGFPPick
 from bson import ObjectId
+from include.tgfp import TGFP, TGFPPick
+
+
 # pylint: disable=redefined-outer-name
-
-
 @pytest.fixture
 def tgfp_db() -> TGFP:
     """
@@ -19,7 +14,7 @@ def tgfp_db() -> TGFP:
     :return: tgfp database object
     :rtype: TGFP
     """
-    return TGFP(load_test_fixture=True)
+    return TGFP()
 
 
 # pylint: disable=missing-function-docstring
@@ -40,7 +35,7 @@ def test_pick(pick: TGFPPick):
 
 
 def test_pick_init():
-    new_pick = TGFPPick(TGFP(load_test_fixture=True), data=None)
+    new_pick = TGFPPick(TGFP(), data=None)
     assert hasattr(new_pick, 'week_no') is False
 
 
@@ -56,7 +51,7 @@ def test_save(pick):
     assert pick.wins == 11
     pick.wins = 4
     pick.save()
-    new_pick: TGFPPick = TGFP(load_test_fixture=True).picks()[0]
+    new_pick: TGFPPick = TGFP().picks()[0]
     assert new_pick.id == pick.id
     assert new_pick.wins == 4
 

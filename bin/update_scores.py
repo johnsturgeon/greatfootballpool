@@ -1,10 +1,12 @@
 """ This file will update all the scores in the mongo DB for the great football pool """
+import os
 import pprint
-from common_init import get_settings
-settings = get_settings()
-# pylint: disable=wrong-import-position
-from yahoo import Yahoo  # noqa E402
-from tgfp import TGFP  # noqa E402
+from instance.config import get_config
+from include.yahoo import Yahoo
+from include.tgfp import TGFP
+
+config = get_config(os.getenv('FLASK_ENV'))
+logger = config.logger(os.path.basename(__file__))
 
 
 def main():

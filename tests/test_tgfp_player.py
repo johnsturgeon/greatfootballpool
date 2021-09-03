@@ -1,14 +1,10 @@
 """Unit Test wrapper for discord_bot_tester.py"""
 import math
-from common_init import get_settings
-settings = get_settings()
+import pytest
+from include.tgfp import TGFP, TGFPPick, TGFPPlayer
 
-# pylint: disable=wrong-import-position
-import pytest  # noqa E402
-from tgfp import TGFP, TGFPPick, TGFPPlayer  # noqa E402
+
 # pylint: disable=redefined-outer-name
-
-
 @pytest.fixture
 def tgfp_db():
     """
@@ -17,7 +13,7 @@ def tgfp_db():
     :return: tgfp database object
     :rtype: TGFP
     """
-    return TGFP(load_test_fixture=True)
+    return TGFP()
 
 
 @pytest.fixture
@@ -132,7 +128,7 @@ def test_player_save(player: TGFPPlayer):
     assert player.first_name == "John"
     player.first_name = "Juan"
     player.save()
-    new_data = TGFP(load_test_fixture=True)
+    new_data = TGFP()
     new_player = new_data.players()[0]
     assert new_player.first_name == "Juan"
     new_player.first_name = "John"

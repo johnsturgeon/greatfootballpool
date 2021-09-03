@@ -1,6 +1,6 @@
 """ Updates the win/loss record for all the players in TGFP """
-from yahoo import Yahoo
-from tgfp import TGFP
+from include.yahoo import Yahoo
+from include.tgfp import TGFP
 
 
 def main():

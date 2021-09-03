@@ -1,5 +1,5 @@
 """Discord bot runs in the background and handles all requests to discord."""
-import dataclasses
+from dataclasses import dataclass
 import os
 import logging
 import json
@@ -8,8 +8,6 @@ import discord
 
 client = discord.Client()
 
-# TODO: replace this with `bot_send`
-
 
 @dataclass
 class MessageData:
@@ -17,7 +15,7 @@ class MessageData:
     game_id: str
 
 
-message_data = MessageData()
+message_data = MessageData(game_id="")
 
 
 def embed_game_alert():
@@ -82,7 +80,7 @@ def alert_game_id_final(tgfp_game_id):
     """ called from an external program to send a game alert """
     dirname = os.path.dirname(os.path.abspath(__file__))
     conf_path = os.path.normpath(os.path.join(dirname, '../conf/settings.json'))
-    with open(conf_path) as config_file:
+    with open(conf_path, encoding='utf-8') as config_file:
         settings = json.load(config_file)
     log_dir = settings['config']['log_dir']
     logging.basicConfig(level=logging.INFO,

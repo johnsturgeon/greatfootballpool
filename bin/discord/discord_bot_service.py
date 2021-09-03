@@ -58,7 +58,8 @@ def game_line_for_game(tgfp_game: TGFPGame, player_pick: TGFPPick):
         road_team.short_name,
         home_team.short_name,
         player_win_team.short_name,
-        winning_team,tgfp_game.road_team_score,
+        winning_team,
+        tgfp_game.road_team_score,
         tgfp_game.home_team_score,
         icon
     ]
