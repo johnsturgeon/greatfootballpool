@@ -1,7 +1,7 @@
 """Discord bot runs in the background and handles all requests to discord."""
 import os
 import discord
-from instance.config import get_config
+from config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))
 

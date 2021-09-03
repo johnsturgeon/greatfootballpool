@@ -3,7 +3,7 @@ import os
 import subprocess
 from subprocess import check_output, CalledProcessError
 
-from instance.config import get_config
+from config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))
 

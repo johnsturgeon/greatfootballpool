@@ -3,7 +3,7 @@ import os
 import logging
 import discord
 from include.tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer
-from instance.config import get_config
+from config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))
 logger = config.logger(os.path.basename(__file__))

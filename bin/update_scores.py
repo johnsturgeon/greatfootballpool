@@ -1,7 +1,7 @@
 """ This file will update all the scores in the mongo DB for the great football pool """
 import os
 import pprint
-from instance.config import get_config
+from config import get_config
 from include.yahoo import Yahoo
 from include.tgfp import TGFP
 
