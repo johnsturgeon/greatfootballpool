@@ -1,31 +1,23 @@
 name: 'Lint Action'
-description: 'Lint the Great Football Pool'
-inputs:
-  settings_json:
-    description: "Text blob containing the json for the settings"
-    required: true
+description: 'Lint the Code'
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Install dependencies
-      run: |
-        echo "Installing Dependencies"
-        cd ${{ github.workspace }}
-        python -m venv env
-        source env/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
       shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest pylint pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#    - name: Lint with flake8
+#      shell: bash
+#      run: |
+#        # stop the build if there are Python syntax errors or undefined names
+#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with pylint
-      run: |
-        echo "Linting with pylint"
-        grep init-hook .pylintrc
-        env/bin/python -m pylint --verbose --rcfile .pylintrc bin/*.py bin/discord/*.py flask_site/include/*.py
-      env:
-        PYTHONPATH: "./flask_site/"
       shell: bash
-    - name: Check code with flake8
       run: |
-        echo "Linting with flake8"
-        env/bin/python -m flake8 --config .flake8 bin/*.py bin/discord/*.py flask_site/include/*.py
-      shell: bash
+        # lint the module, and the tests
+        pylint --rcfile=.pylintrc bin flask_site
