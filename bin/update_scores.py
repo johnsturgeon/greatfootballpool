@@ -2,6 +2,7 @@
 import os
 import pprint
 # pylint: disable=import-error
+# pylint: disable=no-name-in-module
 from instance.config import get_config
 from include.yahoo import Yahoo
 from include.tgfp import TGFP

@@ -2,6 +2,7 @@
 import os
 
 # pylint: disable=import-error
+# pylint: disable=no-name-in-module
 from instance.config import get_config
 from update_scores import main as update_scores
 from mongo_backup import main as backup_db

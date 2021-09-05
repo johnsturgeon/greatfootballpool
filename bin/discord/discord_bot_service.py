@@ -4,6 +4,7 @@ import logging
 import discord
 from include.tgfp import TGFP, TGFPGame, TGFPPick, TGFPPlayer
 # pylint: disable=import-error
+# pylint: disable=no-name-in-module
 from instance.config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))
