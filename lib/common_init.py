@@ -17,6 +17,6 @@ def get_settings():
 
     dirname = os.path.dirname(os.path.abspath(__file__))
     conf_path = os.path.normpath(os.path.join(dirname, relative_conf_json))
-    with open(conf_path) as config_file:
+    with open(conf_path, encoding='utf-8') as config_file:
         app_settings = json.load(config_file)
     return app_settings

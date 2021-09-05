@@ -1,7 +1,7 @@
 """ Used to create the picks page """
 import pprint
-from yahoo import Yahoo
-from tgfp import TGFP, TGFPGame
+from include.yahoo import Yahoo
+from include.tgfp import TGFP, TGFPGame
 
 pp = pprint.PrettyPrinter(indent=4)
 tgfp = TGFP()
@@ -38,8 +38,7 @@ def main():
                 average_spread = -0.5
             favorite_team_id = home_team_id
         elif average_spread > 0:
-            if average_spread < 0.5:
-                average_spread = 0.5
+            average_spread = max(average_spread, 0.5)
             favorite_team_id = road_team_id
         else:
             favorite_team_id = home_team_id

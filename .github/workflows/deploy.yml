@@ -1,0 +1,112 @@
+name: Deploy Flask Site
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Lint Check
+        uses: ./.github/actions/lint
+
+  deploy:
+    name: Deploy (Production)
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: https://greatfootballpool.com
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/v*/}" >> $GITHUB_ENV
+      - name: SSH - Enter maintenance mode
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            bin/begin_deployment.sh
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+
+      - name: Rsync over requirements file
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.REMOTE_HOST }}
+          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}/requirements.txt
+
+          VERBOSE: true
+          USER: ${{ secrets.REMOTE_USER }}
+          ARGS: -avz
+          SOURCE: ./requirements.txt
+
+      - name: SSH - Create virtual env
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            rm -rf env
+            virtualenv -p `which python3` env
+            source env/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            rm requirements.txt
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+
+      - name: Rsync flask site to production
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.REMOTE_HOST }}
+          KEY: ${{ secrets.REMOTE_SSH_KEY }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}/flask_site/
+
+          VERBOSE: true
+          USER: ${{ secrets.REMOTE_USER }}
+          ARGS: -avz --delete --exclude instance
+          SOURCE: ./flask_site/
+
+      - name: SSH - Create .version file in the flask_site/instance
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            echo ${{ env.RELEASE_VERSION }} > ${{ secrets.REMOTE_TARGET }}/flask_site/instance/.version
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+
+      - name: Rsync bin to production
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.REMOTE_HOST }}
+          KEY: ${{ secrets.REMOTE_SSH_KEY }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}/bin/
+
+          VERBOSE: true
+          USER: ${{ secrets.REMOTE_USER }}
+          ARGS: -avz --delete
+          SOURCE: ./bin/
+
+      - name: SSH - Restart db daemon
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            bin/end_deployment.sh
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}

@@ -1,33 +1,21 @@
 """Discord bot runs in the background and handles all requests to discord."""
+from dataclasses import dataclass
 import os
 import logging
 import json
-from tgfp import TGFP
+from include.tgfp import TGFP
 import discord
 
 client = discord.Client()
 
-# TODO: replace this with `bot_send`
 
-
+@dataclass
 class MessageData:
     """This class will contain all the data necessary to send the message."""
-
-    # pylint: disable=too-few-public-methods
-    # pylint: disable=missing-function-docstring
-    def __init__(self):
-        self.__game_id = None
-
-    @property
-    def game_id(self):
-        return self.__game_id
-
-    @game_id.setter
-    def game_id(self, game_id):
-        self.__game_id = game_id
+    game_id: str
 
 
-message_data = MessageData()
+message_data = MessageData(game_id="")
 
 
 def embed_game_alert():
@@ -74,10 +62,9 @@ def embed_game_alert():
 @client.event
 async def on_ready():
     """ callback for when discord bot connects to the channel and is ready """
-    # TODO: This is wrong since it doesn't use 'guild' correctly
     # guild: Guild
     # for guild in client.guilds:
-    #     if guild.name == os.getenv('DISCORD_GUILD'):
+    #     if guild.name == config.DISCORD_GUILD
     #         break
     # channel = None
     # for channel in guild.channels:
@@ -92,7 +79,7 @@ def alert_game_id_final(tgfp_game_id):
     """ called from an external program to send a game alert """
     dirname = os.path.dirname(os.path.abspath(__file__))
     conf_path = os.path.normpath(os.path.join(dirname, '../conf/settings.json'))
-    with open(conf_path) as config_file:
+    with open(conf_path, encoding='utf-8') as config_file:
         settings = json.load(config_file)
     log_dir = settings['config']['log_dir']
     logging.basicConfig(level=logging.INFO,

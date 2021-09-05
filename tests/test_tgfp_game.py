@@ -1,18 +1,16 @@
 """Unit Test wrapper for discord_bot_tester.py"""
-from datetime import datetime  # noqa E402
-from common_init import get_settings
-
-settings = get_settings()
-
-# pylint: disable=wrong-import-position
-import pytest  # noqa E402
-from tgfp import TGFP, TGFPGame, TGFPTeam  # noqa E402
+import os
+from datetime import datetime
+import pytest
 from bson import ObjectId
+from include.tgfp import TGFP, TGFPGame, TGFPTeam
+# pylint: disable=import-error
+from instance.config import get_config
+
+config = get_config(os.getenv('FLASK_ENV'))
 
 
 # pylint: disable=redefined-outer-name
-
-
 @pytest.fixture
 def tgfp_db():
     """
@@ -21,7 +19,7 @@ def tgfp_db():
     :return: tgfp database object
     :rtype: TGFP
     """
-    return TGFP(load_test_fixture=True)
+    return TGFP()
 
 
 # pylint: disable=missing-function-docstring
@@ -48,11 +46,11 @@ def test_game_mongo_data(game):
 def test_game_save(game: TGFPGame):
     assert game.game_status == 'final'
     game.game_status = 'in progress'
-    new_tgfp = TGFP(load_test_fixture=True)
+    new_tgfp = TGFP()
     new_game = new_tgfp.games()[0]
     assert new_game.game_status == 'final'
     game.save()
-    newer_tgfp = TGFP(load_test_fixture=True)
+    newer_tgfp = TGFP()
     newer_game = newer_tgfp.games()[0]
     assert newer_game.game_status == 'in progress'
     newer_game.game_status = 'final'

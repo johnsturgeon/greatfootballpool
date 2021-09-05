@@ -1,15 +1,12 @@
-"""Unit Test wrapper for discord_bot_tester.py"""
-from common_init import get_settings
-settings = get_settings()
+"""Unit Test For TGFP """
+import pytest
+from bson import ObjectId
 
-# pylint: disable=wrong-import-position
-import pytest  # noqa E402
-from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer  # noqa E402
-from yahoo import Yahoo  # noqa E402
-from bson import ObjectId  # noqa: E402
+from include.tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
+from include.yahoo import Yahoo
+
+
 # pylint: disable=redefined-outer-name
-
-
 @pytest.fixture
 def tgfp_db():
     """
@@ -18,7 +15,7 @@ def tgfp_db():
     :return: tgfp database object
     :rtype: TGFP
     """
-    return TGFP(load_test_fixture=True)
+    return TGFP()
 
 
 @pytest.fixture

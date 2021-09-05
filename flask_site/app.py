@@ -1,52 +1,33 @@
-""" Passenger wsgi file, this is the main 'routing' logic for
-    The Great Football Pool website
-"""
+""" app file for The Great Football Pool website """
 import os
-import sys
-dirname = os.path.dirname(os.path.abspath(__file__))
-DOT_ENV_PATH = os.path.normpath(os.path.join(dirname, '../conf/.env'))
-INTERP = os.path.normpath(os.path.join(dirname, '../env/bin/python'))
+import sentry_sdk
+from flask import Flask, session, request, abort
+from flask import render_template, redirect, url_for, g
+from sentry_sdk.integrations.flask import FlaskIntegration
+from bson import ObjectId
+from include.tgfp import TGFP, TGFPPick
+# pylint: disable=no-name-in-module
+# pylint: disable=import-error
+from instance.config import get_config
 
-if sys.executable != INTERP:
-    os.execl(INTERP, INTERP, *sys.argv)
-# pylint: disable=wrong-import-position
-import sentry_sdk  # noqa: E402
-from flask import Flask, session, request, abort  # noqa: E402
-from flask import render_template, redirect, url_for, g  # noqa: E402
-from sentry_sdk.integrations.flask import FlaskIntegration  # noqa: E402
-from bson import ObjectId  # noqa: E402
-from tgfp import TGFP, TGFPPick  # noqa: E402
-from dotenv import load_dotenv  # noqa: E402
+flask_env = os.getenv('FLASK_ENV')
+config = get_config(flask_env)
+logger = config.logger(os.path.basename(__file__))
 
-load_dotenv(dotenv_path=DOT_ENV_PATH)
+DEBUG = flask_env.lower() != 'production'
 
-DEBUG = bool(os.getenv('DEBUG'))
-LOGGING_DIR = os.getenv('LOGGING_DIR')
+app = Flask(__name__)
+app.secret_key = config.SECRET_KEY
 
-if DEBUG:
-    print("DEBUG MODE")
-    from flask_profile import Profiler
-
-application = Flask(__name__)
-application.secret_key = os.getenv('FLASK_APP_SECRET_KEY')
-
+# pylint: disable=abstract-class-instantiated
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN'),
     integrations=[FlaskIntegration()],
     traces_sample_rate=0.0
 )
 
-if DEBUG:
-    Profiler(application)
-    application.config["flask_profiler"] = {
-        "storage": {
-            "engine": "mongodb",
-        },
-        "profile_dir": LOGGING_DIR
-    }
 
-
-@application.before_request
+@app.before_request
 def before_request():
     """ This runs before every single request to make sure the user is logged in """
     if os.path.exists("maintenance"):
@@ -55,17 +36,18 @@ def before_request():
         tgfp = None
         if not hasattr(g, 'tgfp'):
             tgfp = TGFP()
+        # pylint: disable=assigning-non-slot
         g.current_week = tgfp.current_week()
         g.tgfp = tgfp
 
 
-@application.route('/')
+@app.route('/')
 def index():
     """ default route / -> home """
     return redirect(url_for('home'))
 
 
-@application.route('/home')
+@app.route('/home')
 def home():
     """ Home page route for the football pool """
     if 'player_name' not in session:
@@ -75,7 +57,7 @@ def home():
     return render_template('home.j2', home_page_text=g.tgfp.home_page_text())
 
 
-@application.route('/picks')
+@app.route('/picks')
 def picks():
     """ Picks page route """
     if 'player_name' not in session:
@@ -124,7 +106,7 @@ def picks():
 
 
 # pylint: disable=too-many-locals
-@application.route('/picks_form', methods=['POST'])
+@app.route('/picks_form', methods=['POST'])
 def picks_form():
     """ This is the form route that handles processing the form data from the picks page """
     tgfp = g.tgfp
@@ -181,8 +163,8 @@ def picks_form():
 # pylint: enable=too-many-locals
 
 
-@application.route('/allpicks', defaults={'week_no': None})
-@application.route('/allpicks/<int:week_no>')
+@app.route('/allpicks', defaults={'week_no': None})
+@app.route('/allpicks/<int:week_no>')
 def allpicks(week_no=None):
     """ route for the 'allpicks' page """
     tgfp = g.tgfp
@@ -209,7 +191,7 @@ def allpicks(week_no=None):
         week_no=picks_week_no)
 
 
-@application.route('/standings')
+@app.route('/standings')
 def standings():
     """ route for the 'standings' page """
     if 'player_name' not in session:
@@ -226,17 +208,17 @@ def standings():
 
 
 # pylint: disable=missing-function-docstring
-@application.route('/rules')
+@app.route('/rules')
 def rules():
     return render_template('rules.j2')
 
 
-@application.route('/picks_form_static')
+@app.route('/picks_form_static')
 def picks_form_static():
     return render_template('picks_form.j2')
 
 
-@application.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if 'player_name' in session:
         return redirect(url_for('home'))
@@ -263,16 +245,17 @@ def login():
     return redirect(url_for('home'))
 
 
-@application.route('/logout')
+@app.route('/logout')
 def logout():
     session.clear()
+    # pylint: disable=assigning-non-slot
     g.current_week = None
     g.tgfp = None
-    application.secret_key = os.urandom(32)
+    app.secret_key = os.urandom(32)
     return redirect(url_for('home'))
 
 
-@application.errorhandler(503)
+@app.errorhandler(503)
 def error_503(error):
     # pylint: disable=unused-argument
     assert error

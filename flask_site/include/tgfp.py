@@ -2,95 +2,121 @@
   This module contains all of the necessary functions for interfacing with
   the the great football pool mongo database
 """
-from common_init import get_settings
-settings = get_settings()
-# pylint: disable=wrong-import-position
-# pylint: disable=C0411
-import pprint  # noqa E402
-from pymongo import MongoClient  # noqa E402
-import pytz  # noqa E402
-from yahoo import Yahoo  # noqa E402
-from bson import ObjectId  # noqa E402
+from __future__ import annotations
+import os
+import pprint
+from typing import List, Optional
+
+import pytz
+from pymongo import MongoClient
+from bson import ObjectId
+from include.yahoo import Yahoo
+# pylint: disable=import-error
+# pylint: disable=no-name-in-module
+from instance.config import get_config
 
 pp = pprint.PrettyPrinter(indent=4)
 
 
+class GameNotFoundException(Exception):
+    """ Exception for not finding a game """
+
+
 # pylint: disable=missing-function-docstring
 # pylint: disable=too-many-instance-attributes
-class TGFP():
+class TGFP:
     """
     Main class for the great football pool
     """
 
     PRO_BOWL_WEEK = 21
 
-    def __init__(self, load_test_fixture=False):
-        # traceback.print_stack(file=sys.stdout)
-        self.init_ivars()
-        mongo_db_url = (
-            settings['mongo']['test_db_url'] if load_test_fixture
-            else settings['mongo']['db_url']
+    def __init__(self):
+        self.configuration = get_config(os.getenv('FLASK_ENV'))
+        self._teams = []
+        self._games = []
+        self._picks = []
+        self._players = []
+        self._home_page_text = ""
+        self._current_season = 0
+        self._yahoo = None
+
+        self.mongoclient: MongoClient = MongoClient(
+            host=self.configuration.MONGO_HOST,
+            username=self.configuration.MONGO_USERNAME,
+            password=self.configuration.MONGO_PASSWORD,
+            authSource=self.configuration.MONGO_DB
         )
-        self.mongoclient = MongoClient(mongo_db_url)
-        self.mongodb = (
-            self.mongoclient['tgfp_test'] if load_test_fixture
-            else self.mongoclient['tgfp']
-        )
+
+        self.mongodb = self.mongoclient['tgfp']
         self._yahoo = None
         self._home_page_text = None
         self._current_season = None
 
-    def games(self):
+    def games(self) -> List[TGFPGame]:
         """
         Get an array of all TGFPGames in the entire db
-        Returns:
-          - TGFPGames[]
         """
         if not self._games:
             for game in self.mongodb.games.find(batch_size=100000):
                 self._games.append(TGFPGame(tgfp=self, data=game))
         return self._games
 
-    def teams(self):
+    def teams(self) -> List[TGFPTeam]:
+        """
+        Get an array of all TGFPTeams in the entire DB
+        """
         if not self._teams:
             for team in self.mongodb.teams.find(batch_size=100000):
                 self._teams.append(TGFPTeam(tgfp=self, data=team))
         return self._teams
 
-    def picks(self):
+    def picks(self) -> List[TGFPPick]:
+        """
+        Get an array of all the TGFPPicks in the db
+        """
         if not self._picks:
             for pick in self.mongodb.picks.find(batch_size=100000):
                 self._picks.append(TGFPPick(tgfp=self, data=pick))
         return self._picks
 
-    def players(self):
+    def players(self) -> List[TGFPPlayer]:
+        """
+        Get a list of all the TGFPPlayers in the db
+        """
         if not self._players:
             for player in self.mongodb.players.find(batch_size=100000):
                 self._players.append(TGFPPlayer(tgfp=self, data=player))
         return self._players
 
-    def yahoo(self):
+    def yahoo(self) -> Yahoo:
+        """ Returns the Yahoo instance """
         if not self._yahoo:
             self._yahoo = Yahoo(week_no=0)
         return self._yahoo
 
-    def current_week(self):
+    def current_week(self) -> int:
         """
-        Gets the current week"
+        Gets the current week
 
         This is defined the current week.
         It will advance to the next week once all games are 'final'
         """
         last_game: TGFPGame
         current_week: int
-        last_game = self.find_games(ordered_by='week_no')[-1]
+        last_game_list: List[TGFPGame] = self.find_games(ordered_by='week_no')
+        if not last_game_list:
+            return 1  # First week
+        last_game = last_game_list[-1]
         last_weeks_games = self.find_games(week_no=last_game.week_no)
         all_games_completed = True
-        game: TGFPGame
+        game: Optional[TGFPGame] = None
         for game in last_weeks_games:
             if game.game_status != 'final':
                 all_games_completed = False
                 break
+        if game is None:
+            raise GameNotFoundException
         if all_games_completed:
             current_week = game.week_no + 1
         else:
@@ -101,13 +127,16 @@ class TGFP():
 
         return current_week
 
-    def current_season(self):
+    def current_season(self) -> int:
+        """
+        Returns the current season
+        """
         if not self._current_season:
             current_season = self.mongodb.tgfp_info.find_one(batch_size=100000)
             self._current_season = current_season['current_season']
         return self._current_season
 
-    def current_active_week(self):
+    def current_active_week(self) -> int:
         """
         Gets the currently 'active' week"
 
@@ -119,14 +148,19 @@ class TGFP():
         """
         last_game: TGFPGame
         current_week: int
-        last_game = self.find_games(ordered_by='week_no')[-1]
+        last_game_list: List[TGFPGame] = self.find_games(ordered_by='week_no')
+        if not last_game_list:
+            return 1
+        last_game = last_game_list[-1]
         last_weeks_games = self.find_games(week_no=last_game.week_no)
         any_games_completed = False
-        game: TGFPGame
+        game: Optional[TGFPGame] = None
         for game in last_weeks_games:
             if game.game_status == 'final':
                 any_games_completed = True
                 break
+        if game is None:
+            raise GameNotFoundException
         if any_games_completed:
             current_week = game.week_no
         else:
@@ -135,6 +169,7 @@ class TGFP():
         return current_week
 
     def home_page_text(self):
+        """ Returns the text of the home page """
         if not self._home_page_text:
             tgfp_info = self.mongodb.tgfp_info.find_one(batch_size=100000)
             self._home_page_text = tgfp_info['home_page_text']
@@ -147,7 +182,7 @@ class TGFP():
             discord_id=None,
             player_active=None,
             ordered_by=None,
-            reverse_order=False):
+            reverse_order=False) -> List[TGFPPlayer]:
         # pylint: disable=too-many-arguments
         """
         Returns a list of players based on the search criteria
@@ -178,7 +213,8 @@ class TGFP():
 
         return found_players
 
-    def find_teams(self, team_id=None, yahoo_team_id=None):
+    def find_teams(self, team_id=None, yahoo_team_id=None) -> List[TGFPTeam]:
+        """ find a list of TGFPTeams given input filter team_id and or yahoo_team_id """
         found_teams = []
         team: TGFPTeam
         for team in self.teams():
@@ -192,7 +228,8 @@ class TGFP():
 
         return found_teams
 
-    def find_picks(self, pick_id=None, week_no=None, season=None, player_id=None):
+    def find_picks(self, pick_id=None, week_no=None, season=None, player_id=None) -> List[TGFPPick]:
+        """ Find a list of TGFPPicks """
         found_picks = []
         if season:
             search_season = season
@@ -223,7 +260,8 @@ class TGFP():
             season=None,
             home_team_id=None,
             ordered_by=None,
-            game_status=None):
+            game_status=None) -> List[TGFPGame]:
+        """ Find list of games """
         # pylint: disable=too-many-arguments
 
         found_games = []
@@ -256,17 +294,8 @@ class TGFP():
 
         return found_games
 
-    def init_ivars(self):
-        self._teams = []
-        self._games = []
-        self._picks = []
-        self._players = []
-        self._home_page_text = ""
-        self._current_season = 0
-        self._yahoo = None
 
-
-class TGFPTeam():
+class TGFPTeam:
     # pylint: disable=too-many-instance-attributes
     """
     TGFP Class for a 'team'
@@ -307,7 +336,7 @@ class TGFPTeam():
         return self._id
 
 
-class TGFPPlayer():
+class TGFPPlayer:
     # pylint: disable=too-many-instance-attributes
     """ Class for a player """
 
@@ -329,6 +358,7 @@ class TGFPPlayer():
         return self._id
 
     def wins(self, week_through=None, week_no=None):
+        # noinspection DuplicatedCode
         """return the number of wins optionally for a single week, or through week_no"""
         assert week_no is None or week_through is None
         if not self._picks:
@@ -424,7 +454,7 @@ class TGFPPlayer():
         )
 
 
-class TGFPGame():
+class TGFPGame:
     # pylint: disable=too-many-instance-attributes
     """ Game class for the TGFP """
 
@@ -433,7 +463,20 @@ class TGFPGame():
         self._id = None
 
         if data:
-            self.load_data(data)
+            if '_id' in data:
+                self._id = data['_id']
+            # below are mandatory fields in the DB
+            self.favorite_team_id = data['favorite_team_id']
+            self.game_status = data['game_status']
+            self.home_team_id = data['home_team_id']
+            self.home_team_score = data['home_team_score']
+            self.road_team_id = data['road_team_id']
+            self.road_team_score = data['road_team_score']
+            self.spread = data['spread']
+            self.start_time = data['start_time']
+            self.week_no = data['week_no']
+            self.season = data['season']
+            self.yahoo_game_id = data['yahoo_game_id']
 
     def mongo_data(self):
         filtered_dict = {}
@@ -442,22 +485,6 @@ class TGFPGame():
                 filtered_dict.update({key: value})
 
         return filtered_dict
-
-    def load_data(self, data):
-        if '_id' in data:
-            self._id = data['_id']
-        # below are mandatory fields in the DB
-        self.favorite_team_id = data['favorite_team_id']
-        self.game_status = data['game_status']
-        self.home_team_id = data['home_team_id']
-        self.home_team_score = data['home_team_score']
-        self.road_team_id = data['road_team_id']
-        self.road_team_score = data['road_team_score']
-        self.spread = data['spread']
-        self.start_time = data['start_time']
-        self.week_no = data['week_no']
-        self.season = data['season']
-        self.yahoo_game_id = data['yahoo_game_id']
 
     def save(self):
         result = self._tgfp.mongodb.games.update_one(
@@ -563,7 +590,7 @@ class TGFPGame():
         return pac_dt.normalize(utc_dt.astimezone(pac_dt))
 
 
-class TGFPPick():
+class TGFPPick:
     """ Class for the player's picks """
     # pylint: disable=too-many-instance-attributes
     # pylint: enable=too-many-instance-attributes
@@ -608,26 +635,27 @@ class TGFPPick():
             week_no=self.week_no,
             season=self.season) if games is None else games
 
-        pick: TGFPPick
         for pick in self.pick_detail:
-            game: TGFPGame
+            game: Optional[TGFPGame] = None
             for game in games_array:
                 if game.id == pick['game_id']:
                     break
-            if game.game_status == "final":
-                if game.road_team_score == game.home_team_score:
-                    winning_team_id = None
-                    self.losses += 1
+            if game is None:
+                raise GameNotFoundException
+            if game.game_status != "final":
+                continue
+            if game.road_team_score == game.home_team_score:
+                self.losses += 1
+            else:
+                if game.road_team_score > game.home_team_score:
+                    winning_team_id = game.road_team_id
+                    losing_team_id = game.home_team_id
                 else:
-                    if game.road_team_score > game.home_team_score:
-                        winning_team_id = game.road_team_id
-                        losing_team_id = game.home_team_id
-                    else:
-                        winning_team_id = game.home_team_id
-                        losing_team_id = game.road_team_id
+                    winning_team_id = game.home_team_id
+                    losing_team_id = game.road_team_id
 
-                    self.update_wins(pick, winning_team_id)
-                    self.update_bonus(winning_team_id, losing_team_id)
+                self.update_wins(pick, winning_team_id)
+                self.update_bonus(winning_team_id, losing_team_id)
 
     def update_wins(self, pick, winning_team_id):
         if winning_team_id == pick['winner_id']:
