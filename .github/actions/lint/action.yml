@@ -20,6 +20,8 @@ runs:
       run: |
         echo "Linting with pylint"
         env/bin/python -m pylint --rcfile .pylintrc bin/*.py bin/discord/*.py flask_site/include/*.py
+      env:
+        PYTHONPATH: "/home/www/greatfootballpool/flask_site"
       shell: bash
     - name: Check code with flake8
       run: |
