@@ -45,7 +45,7 @@ jobs:
         uses: up9cloud/action-rsync@master
         env:
           HOST: ${{ secrets.REMOTE_HOST }}
-          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          KEY: ${{ secrets.REMOTE_SSH_KEY }}
           TARGET: ${{ secrets.REMOTE_TARGET }}/requirements.txt
 
           VERBOSE: true
