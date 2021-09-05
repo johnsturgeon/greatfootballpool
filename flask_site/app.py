@@ -6,7 +6,7 @@ from flask import render_template, redirect, url_for, g
 from sentry_sdk.integrations.flask import FlaskIntegration
 from bson import ObjectId
 from include.tgfp import TGFP, TGFPPick
-from config import get_config
+from instance.config import get_config
 
 flask_env = os.getenv('FLASK_ENV')
 config = get_config(flask_env)

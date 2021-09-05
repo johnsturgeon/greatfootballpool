@@ -1,4 +1,5 @@
 flask~=2.0.1
+gunicorn~=20.1.0
 pylint~=2.10.2
 pylint-pydantic~=0.1.4
 pylint-flask~=0.6
