@@ -62,7 +62,6 @@ def embed_game_alert():
 @client.event
 async def on_ready():
     """ callback for when discord bot connects to the channel and is ready """
-    # TODO: This is wrong since it doesn't use 'guild' correctly
     # guild: Guild
     # for guild in client.guilds:
     #     if guild.name == config.DISCORD_GUILD

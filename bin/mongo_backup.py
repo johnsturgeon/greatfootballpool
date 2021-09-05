@@ -3,6 +3,7 @@ import os
 import subprocess
 from subprocess import check_output, CalledProcessError
 
+# pylint: disable=import-error
 from instance.config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))

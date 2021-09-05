@@ -1,6 +1,7 @@
 """This is a 'do everything' script for updating the scores in mongo."""
 import os
 
+# pylint: disable=import-error
 from instance.config import get_config
 from update_scores import main as update_scores
 from mongo_backup import main as backup_db

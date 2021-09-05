@@ -11,6 +11,7 @@ import pytz
 from pymongo import MongoClient
 from bson import ObjectId
 from include.yahoo import Yahoo
+# pylint: disable=import-error
 from instance.config import get_config
 
 pp = pprint.PrettyPrinter(indent=4)

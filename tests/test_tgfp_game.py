@@ -4,7 +4,8 @@ from datetime import datetime
 import pytest
 from bson import ObjectId
 from include.tgfp import TGFP, TGFPGame, TGFPTeam
-from config import get_config
+# pylint: disable=import-error
+from instance.config import get_config
 
 config = get_config(os.getenv('FLASK_ENV'))
 

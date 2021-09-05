@@ -17,7 +17,6 @@ class Yahoo:
         self.games_data = None
         self.teams_data = None
         self.week_no = week_no
-        # TODO: Get this value from settings
         self.debug = True
 
     def games(self):
