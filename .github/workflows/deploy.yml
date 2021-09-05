@@ -84,7 +84,6 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            touch ${{ secrets.REMOTE_TARGET }}/flask_site/instance/.version
             echo "${{ env.RELEASE_VERSION }}" > ${{ secrets.REMOTE_TARGET }}/flask_site/instance/.version
           host: ${{ secrets.REMOTE_HOST }}
           user: ${{ secrets.REMOTE_USER }}
