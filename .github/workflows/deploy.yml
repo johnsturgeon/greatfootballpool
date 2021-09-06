@@ -45,7 +45,7 @@ jobs:
         uses: up9cloud/action-rsync@master
         env:
           HOST: ${{ secrets.REMOTE_HOST }}
-          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          KEY: ${{ secrets.REMOTE_SSH_KEY }}
           TARGET: ${{ secrets.REMOTE_TARGET }}/requirements.txt
 
           VERBOSE: true
@@ -84,7 +84,7 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            echo ${{ env.RELEASE_VERSION }} > ${{ secrets.REMOTE_TARGET }}/flask_site/instance/.version
+            echo "${{ env.RELEASE_VERSION }}" > ${{ secrets.REMOTE_TARGET }}/flask_site/instance/.version
           host: ${{ secrets.REMOTE_HOST }}
           user: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
