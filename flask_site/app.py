@@ -273,33 +273,6 @@ def no_player():
     return render_template('no_player.j2')
 
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if 'player_name' in session:
-        return redirect(url_for('home'))
-
-    if request.method != 'POST':
-        return render_template('login.j2')
-
-    tgfp = g.tgfp
-    players = tgfp.find_players(player_email=request.form['email'])
-    if not players:
-        session.clear()
-        session['login_status'] = 'incorrect login'
-        return redirect(url_for('login'))
-
-    tgfp_player = players[0]
-    if tgfp_player.password != request.form['password']:
-        session.clear()
-        session['login_status'] = 'incorrect login'
-        return redirect(url_for('login'))
-
-    session['login_status'] = 'logged in'
-    session['player_name'] = tgfp_player.first_name + ' ' + tgfp_player.last_name
-    session['player_email'] = tgfp_player.email
-    return redirect(url_for('home'))
-
-
 @app.route('/logout')
 def logout():
     session.clear()

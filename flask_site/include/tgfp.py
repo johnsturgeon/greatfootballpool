@@ -348,7 +348,6 @@ class TGFPPlayer:
         self.first_name = data['first_name']
         self.nick_name = data['nick_name']
         self.email = data['email']
-        self.password = data['password']
         self.active = bool(data['active'])
         self.discord_id = data['discord_id']
 
