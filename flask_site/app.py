@@ -102,7 +102,7 @@ def home():
     """ Home page route for the football pool """
     if 'player_name' not in session:
         session['login_status'] = 'not logged in'
-        return redirect(url_for('login'))
+        return redirect(url_for('discord_login'))
 
     return render_template('home.j2', home_page_text=g.tgfp.home_page_text())
 
@@ -112,7 +112,7 @@ def picks():
     """ Picks page route """
     if 'player_name' not in session:
         session['login_status'] = 'not logged in'
-        return redirect(url_for('login'))
+        return redirect(url_for('discord_login'))
 
     tgfp = g.tgfp
     player_email = session['player_email']
@@ -220,7 +220,7 @@ def allpicks(week_no=None):
     tgfp = g.tgfp
     if 'player_name' not in session:
         session['login_status'] = 'not logged in'
-        return redirect(url_for('login'))
+        return redirect(url_for('discord_login'))
 
     picks_week_no = g.current_week
     if week_no:
@@ -246,7 +246,7 @@ def standings():
     """ route for the 'standings' page """
     if 'player_name' not in session:
         session['login_status'] = 'not logged in'
-        return redirect(url_for('login'))
+        return redirect(url_for('discord_login'))
 
     active_players = g.tgfp.find_players(
         player_active=True,
