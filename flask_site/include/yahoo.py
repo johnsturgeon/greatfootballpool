@@ -46,21 +46,22 @@ class Yahoo:
                     'week_no': self.week_no, 'schedState': schedule_state
                 }
             req = Request(url_to_query, headers=all_headers)
-            with urlopen(req).read().decode('utf-8') as raw_game_data:
-                games_data = None
-                for line in raw_game_data.splitlines():
-                    if re.match(r'^root.App.main.*', line):
-                        split_line = line.split(' = ')[1].rstrip(';')
-                        all_data = json.loads(split_line)
-                        stores = all_data['context']['dispatcher']['stores']
-                        games_data = stores['GamesStore']['games']
-                        if self.debug:
-                            try:
-                                with open('games_data.json', 'w', encoding='utf-8') as outfile:
-                                    json.dump(games_data, outfile)
-                            except IOError:
-                                print('could not write games data to json')
-                        break
+            # pylint: disable=consider-using-with
+            raw_game_data = urlopen(req).read().decode('utf-8')
+            games_data = None
+            for line in raw_game_data.splitlines():
+                if re.match(r'^root.App.main.*', line):
+                    split_line = line.split(' = ')[1].rstrip(';')
+                    all_data = json.loads(split_line)
+                    stores = all_data['context']['dispatcher']['stores']
+                    games_data = stores['GamesStore']['games']
+                    if self.debug:
+                        try:
+                            with open('games_data.json', 'w', encoding='utf-8') as outfile:
+                                json.dump(games_data, outfile)
+                        except IOError:
+                            print('could not write games data to json')
+                    break
             for game_key in games_data:
                 if re.match(r'^nfl*', game_key):
                     self._games.append(YahooGame(self, game_data=games_data[game_key]))
@@ -83,21 +84,22 @@ class Yahoo:
                            "AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0  Safari/604.1.38'
                            }
             req = Request('https://sports.yahoo.com/nfl/standings/', headers=all_headers)
-            with urlopen(req).read().decode('utf-8') as raw_teams_data:
-                teams_data = None
-                for line in raw_teams_data.splitlines():
-                    if re.match(r'^root.App.main.*', line):
-                        split_line = line.split(' = ')[1].rstrip(';')
-                        all_data = json.loads(split_line)
-                        stores = all_data['context']['dispatcher']['stores']
-                        teams_data = stores['TeamsStore']['teams']
-                        if self.debug:
-                            try:
-                                with open('team_data.json', 'w', encoding='utf-8') as outfile:
-                                    json.dump(teams_data, outfile)
-                            except IOError:
-                                print('could not write team data to json file')
-                        break
+            # pylint: disable=consider-using-with
+            raw_teams_data = urlopen(req).read().decode('utf-8')
+            teams_data = None
+            for line in raw_teams_data.splitlines():
+                if re.match(r'^root.App.main.*', line):
+                    split_line = line.split(' = ')[1].rstrip(';')
+                    all_data = json.loads(split_line)
+                    stores = all_data['context']['dispatcher']['stores']
+                    teams_data = stores['TeamsStore']['teams']
+                    if self.debug:
+                        try:
+                            with open('team_data.json', 'w', encoding='utf-8') as outfile:
+                                json.dump(teams_data, outfile)
+                        except IOError:
+                            print('could not write team data to json file')
+                    break
             for team_key in teams_data:
                 if 'default_league' in teams_data[team_key] and \
                    teams_data[team_key]['default_league'] == "nfl":
