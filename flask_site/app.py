@@ -91,6 +91,14 @@ def discord_login():
     return discord.create_session(scope=["identify"], prompt=False)
 
 
+@app.route('/login')
+def login():
+    """ Login link """
+    if 'player_name' in session:
+        return redirect(url_for('home'))
+    return render_template('login.j2')
+
+
 @app.route('/')
 def index():
     """ default route / -> home """
