@@ -1,5 +1,6 @@
 blinker~=1.4
 flask~=2.0.1
+Flask-Discord~=0.1.64
 gunicorn~=20.1.0
 pylint~=2.10.2
 pylint-pydantic~=0.1.4

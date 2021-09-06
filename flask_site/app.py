@@ -1,11 +1,14 @@
 """ app file for The Great Football Pool website """
 import os
+from typing import List, Optional
+
 import sentry_sdk
 from flask import Flask, session, request, abort
 from flask import render_template, redirect, url_for, g
+from flask_discord import DiscordOAuth2Session
 from sentry_sdk.integrations.flask import FlaskIntegration
 from bson import ObjectId
-from include.tgfp import TGFP, TGFPPick
+from include.tgfp import TGFP, TGFPPick, TGFPPlayer
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
 from instance.config import get_config
@@ -14,10 +17,19 @@ flask_env = os.getenv('FLASK_ENV')
 config = get_config(flask_env)
 logger = config.logger(os.path.basename(__file__))
 
+# timeout in seconds * minutes
+seconds_in_one_day: int = 60*60*24
+days_for_timeout: int = 14
+COOKIE_TIME_OUT = days_for_timeout * seconds_in_one_day
+
 DEBUG = flask_env.lower() != 'production'
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+app.config.from_object(config)
+os.environ['DISCORD_REDIRECT_URI'] = config.DISCORD_REDIRECT_URI
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = config.OAUTHLIB_INSECURE_TRANSPORT
+discord = DiscordOAuth2Session(app)
 
 # pylint: disable=abstract-class-instantiated
 sentry_sdk.init(
@@ -30,7 +42,7 @@ sentry_sdk.init(
 @app.before_request
 def before_request():
     """ This runs before every single request to make sure the user is logged in """
-    if os.path.exists("maintenance"):
+    if os.path.exists("../maintenance"):
         abort(503)
     if 'static' not in request.path and '_profile' not in request.path:
         tgfp = None
@@ -39,6 +51,44 @@ def before_request():
         # pylint: disable=assigning-non-slot
         g.current_week = tgfp.current_week()
         g.tgfp = tgfp
+        if not get_player_from_session():
+            player: TGFPPlayer = get_player_from_cookie()
+            if player:
+                save_player_to_session(player)
+
+
+@app.after_request
+def after_request(response):
+    """ Always set the cookie if it's not set """
+    player: Optional[TGFPPlayer] = None
+    if session.get('clear_discord_id'):
+        response.set_cookie('discord_id', expires=0)
+        session.pop('clear_discord_id')
+    elif not request.cookies.get('discord_id'):
+        player: TGFPPlayer = get_player_from_session()
+        if player and player.discord_id == 0:
+            player = get_player_from_discord_login()
+    if player:
+        response.set_cookie('discord_id', str(player.discord_id), max_age=COOKIE_TIME_OUT)
+
+    return response
+
+
+@app.route("/callback")
+def callback():
+    """ discord callback url """
+    discord.callback()
+    player: TGFPPlayer = get_player_from_discord_login()
+    if player is None:
+        return redirect(url_for("no_player"))
+    save_player_to_session(player)
+    return redirect(url_for("home"))
+
+
+@app.route('/discord_login')
+def discord_login():
+    """ create the discord session """
+    return discord.create_session(scope=["identify"], prompt=False)
 
 
 @app.route('/')
@@ -218,6 +268,11 @@ def picks_form_static():
     return render_template('picks_form.j2')
 
 
+@app.route('/no_player')
+def no_player():
+    return render_template('no_player.j2')
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if 'player_name' in session:
@@ -251,6 +306,9 @@ def logout():
     # pylint: disable=assigning-non-slot
     g.current_week = None
     g.tgfp = None
+    session['login_status'] = 'not logged in'
+    clear_player_from_session()
+    session['clear_discord_id'] = "YES"
     app.secret_key = os.urandom(32)
     return redirect(url_for('home'))
 
@@ -293,3 +351,61 @@ def get_error_messages(pick_detail, games, upset_id, lock_id):
             errors.append("You cannot choose an upset that you didn't choose as a winner")
 
     return errors
+
+
+def save_player_to_session(player: TGFPPlayer):
+    """ Saves the player to the session """
+    session['login_status'] = 'logged in'
+    session['player_name'] = player.first_name + ' ' + player.last_name
+    session['player_email'] = player.email
+
+
+def clear_player_from_session():
+    """ Clears out the player session data """
+    session['login_status'] = 'not logged in'
+    if session.get('player_name'):
+        session.pop('player_name')
+    if session.get('player_email'):
+        session.pop('player_email')
+
+
+def get_player_from_session() -> Optional[TGFPPlayer]:
+    """ Instantiate a player from existing session data Return None if can't be found """
+    if session.get('player_email'):
+        return get_player_by_email(session.get('player_email'))
+    return None
+
+
+def get_player_from_cookie() -> Optional[TGFPPlayer]:
+    """ Gets the player from the browser cookie """
+    discord_id = request.cookies.get('discord_id')
+    if discord_id:
+        return get_player_by_discord_id(int(discord_id))
+    return None
+
+
+def get_player_from_discord_login() -> Optional[TGFPPlayer]:
+    """ Returns the currently logged in player, None if not logged in """
+    discord_user = discord.fetch_user()
+    if discord_user:
+        return get_player_by_discord_id(discord_user.id)
+
+    return None
+
+
+def get_player_by_discord_id(discord_id: int) -> Optional[TGFPPlayer]:
+    """ Returns a player by their discord ID """
+    tgfp = g.tgfp
+    players: List[TGFPPlayer] = tgfp.find_players(discord_id=discord_id)
+    if len(players) == 1:
+        return players[0]
+    return None
+
+
+def get_player_by_email(email: str) -> Optional[TGFPPlayer]:
+    """ Returns a player by their email """
+    tgfp = g.tgfp
+    players: List[TGFPPlayer] = tgfp.find_players(player_email=email)
+    if len(players) == 1:
+        return players[0]
+    return None
