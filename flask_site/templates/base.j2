@@ -4,7 +4,7 @@
     {% set login_status_class='subhead' -%}
 {% endif -%}
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>The Great Football Pool - {{ page_title }}</title>
@@ -32,7 +32,7 @@
     <div id="mainContent">
         <div id="left">
         {% block content %} {% endblock %}
-        <hr size="1">
+        <hr>
         </div>
         <div id="right">
             <div id="loginStatus" class=" {{ login_status_class }}">{{ session['login_status'] }}</div>
@@ -43,6 +43,8 @@
                 {{ session['player'] }}
             {% endif %}
             <a href="{{ url_for('home') }}">Home</a><br />
+            <a href="{{ url_for('profile') }}">Profile</a><br />
+            <a href="{{ url_for('clan_draft') }}">Clan Draft</a><br />
             <a href="{{ url_for('picks') }}">The Picks Page</a><br />
             <a href="{{ url_for('allpicks') }}">Everybody's Picks</a><br />
             <a href="{{ url_for('standings') }}">Standings</a><br />

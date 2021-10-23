@@ -5,7 +5,7 @@
     <td align="left" class="border" style="opacity:{{opacity}}">
         <img align="absmiddle" src="{{ url_for('static', filename='images/' + team.short_name + '.small.gif') }}" border="0">
         ({{ team.wins }}-{{ team.losses }})<br>
-    <input class="myradio" type="radio" name="game_{{ game_id }}" value="{{ team._id }}" {% if team._id == win_team_id %}checked{% endif %} {% if disabled %}disabled{% endif %}>{{ team.long_name }}
+    <input class="my_radio" type="radio" name="game_{{ game_id }}" value="{{ team._id }}" {% if team._id == win_team_id %}checked{% endif %} {% if disabled %}disabled{% endif %}>{{ team.long_name }}
     </td>
 {% endmacro -%}
 {% block content -%}
@@ -64,11 +64,11 @@
         <option value="{{ team._id }}">{{ team.long_name }}</option>
     {% endfor %}
     </select><br>
-    <input class="submitbutton"  name="commit" type="submit" value="Submit Picks" />
+    <input class="submit_button" name="commit" type="submit" value="Submit Picks" />
      </form>
  <script>
     $('#awesome_form').submit(function( event ) {
-        $('.myradio').attr('disabled', false);
+        $('.my_radio').attr('disabled', false);
         $( "#awesome_form" ).submit();
     });
     

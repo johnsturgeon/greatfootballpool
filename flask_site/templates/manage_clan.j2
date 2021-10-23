@@ -1,0 +1,16 @@
+{% extends "base.j2" -%}
+{% set page_title="Profile" -%}
+{% set page_description="Profile page - use this page to manage your profile" -%}
+{% block content -%}
+    <div id="clan_name">{{ clan.name }}</div>
+    <div id="clan_player_list">Current Clan Roster</div>
+    {% for player in clan.members %}
+        <div class="clan_player">{{ player.full_name }}</div>
+    {% endfor %}
+{#<form method="POST" action="{{ url_for('manage_clan') }}">#}
+{#    {{ form.csrf_token }}#}
+{#    {{ form.clan.label }} {{ form.clan(size=20) }}#}
+{#    <br />#}
+{#    <input type="submit" value="Go">#}
+{#</form>#}
+{% endblock -%}

@@ -6,9 +6,13 @@ import sentry_sdk
 from flask import Flask, session, request, abort
 from flask import render_template, redirect, url_for, g
 from flask_discord import DiscordOAuth2Session
+from flask_wtf import FlaskForm
 from sentry_sdk.integrations.flask import FlaskIntegration
 from bson import ObjectId
-from include.tgfp import TGFP, TGFPPick, TGFPPlayer
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+from include.tgfp import TGFP, TGFPPick, TGFPPlayer, TGFPClan
 # pylint: disable=no-name-in-module
 # pylint: disable=import-error
 from instance.config import get_config
@@ -271,6 +275,62 @@ def rules():
     return render_template('rules.j2')
 
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.j2')
+
+
+@app.route('/manage_clan', methods=['GET', 'POST'])
+def manage_clan():
+    tgfp = g.tgfp
+    form = ClanForm()
+    player_email = session['player_email']
+    player: TGFPPlayer = tgfp.find_players(player_email=player_email)[0]
+    if form.validate_on_submit():
+        print(form.clan.data)
+        data = {
+            'name': form.clan.data,
+            'admin_id': player.id,
+            'members': []
+        }
+        clan: TGFPClan = TGFPClan(tgfp=tgfp, data=data)
+        clan.save()
+
+    clans: List[TGFPClan] = tgfp.find_clans(admin_id=player.id)
+    if clans == 1:
+        clan: Optional[TGFPClan] = clans[0]
+    else:
+        clan: Optional[TGFPClan] = None
+    return render_template('manage_clan.j2', form=form, clan=clan)
+
+
+@app.route('/clan_draft')
+def clan_draft():
+    tgfp: TGFP = g.tgfp
+    drafting_clan: Optional[TGFPClan] = None
+    undrafted_players: List[TGFPPlayer] = tgfp.undrafted_players()
+    for clan in tgfp.clans():
+        if clan.is_drafting:
+            drafting_clan = clan
+            break
+    return render_template(
+        'clan_draft.j2',
+        drafting_clan=drafting_clan,
+        undrafted_players=undrafted_players
+    )
+
+
+@app.route('/draft_player')
+def draft_player():
+    tgfp: TGFP = g.tgfp
+    drafted_player_id: ObjectId = ObjectId(request.args.get('player_id'))
+    drafting_clan_id: ObjectId = ObjectId(request.args.get('drafting_clan_id'))
+    clan: TGFPClan = tgfp.find_clans(clan_id=drafting_clan_id)[0]
+    clan.add_member(drafted_player_id)
+
+    return redirect(url_for('clan_draft'))
+
+
 @app.route('/picks_form_static')
 def picks_form_static():
     return render_template('picks_form.j2')
@@ -390,3 +450,9 @@ def get_player_by_email(email: str) -> Optional[TGFPPlayer]:
     if len(players) == 1:
         return players[0]
     return None
+
+
+class ClanForm(FlaskForm):
+    """ WTForm for handling adding a new clan """
+    clan = StringField('What is the name of the Clan', validators=[DataRequired()])
+    submit = SubmitField('Submit')

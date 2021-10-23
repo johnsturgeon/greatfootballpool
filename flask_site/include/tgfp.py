@@ -36,6 +36,7 @@ class TGFP:
         self._teams = []
         self._games = []
         self._picks = []
+        self._clans = []
         self._players = []
         self._home_page_text = ""
         self._current_season = 0
@@ -48,7 +49,7 @@ class TGFP:
             authSource=self.configuration.MONGO_DB
         )
 
-        self.mongodb = self.mongoclient['tgfp']
+        self.mongodb = self.mongoclient[self.configuration.MONGO_DB]
         self._yahoo = None
         self._home_page_text = None
         self._current_season = None
@@ -61,6 +62,15 @@ class TGFP:
             for game in self.mongodb.games.find(batch_size=100000):
                 self._games.append(TGFPGame(tgfp=self, data=game))
         return self._games
+
+    def clans(self) -> List[TGFPClan]:
+        """
+        Get an array of all TGFPClans in the entire db
+        """
+        if not self._clans:
+            for clan in self.mongodb.clans.find(batch_size=100000):
+                self._clans.append(TGFPClan(tgfp=self, data=clan))
+        return self._clans
 
     def teams(self) -> List[TGFPTeam]:
         """
@@ -213,6 +223,23 @@ class TGFP:
 
         return found_players
 
+    def next_clan_draft(self) -> Optional[TGFPClan]:
+
+
+    def undrafted_players(self) -> List[TGFPPlayer]:
+        drafted_players: List[ObjectId] = []
+        undrafted_players: List[TGFPPlayer] = []
+        for clan in self.clans():
+            drafted_players += clan.member_ids
+        for player in self.find_players(
+                player_active=True,
+                ordered_by="total_points",
+                reverse_order=True
+        ):
+            if player.id not in drafted_players:
+                undrafted_players.append(player)
+        return undrafted_players
+
     def find_teams(self, team_id=None, yahoo_team_id=None) -> List[TGFPTeam]:
         """ find a list of TGFPTeams given input filter team_id and or yahoo_team_id """
         found_teams = []
@@ -252,6 +279,7 @@ class TGFP:
 
         return found_picks
 
+    # pylint: disable=too-many-arguments
     def find_games(
             self,
             game_id=None,
@@ -262,7 +290,6 @@ class TGFP:
             ordered_by=None,
             game_status=None) -> List[TGFPGame]:
         """ Find list of games """
-        # pylint: disable=too-many-arguments
 
         found_games = []
         if season:
@@ -293,6 +320,85 @@ class TGFP:
             found_games.sort(key=lambda x: x.week_no)
 
         return found_games
+
+    def find_clans(
+            self,
+            clan_id: ObjectId = None,
+            clan_name: str = None,
+            admin_id: ObjectId = None,
+            member_id=None,
+            ordered_by=None) -> List[TGFPClan]:
+        """ Find list of clans """
+
+        found_clans = []
+        clan: TGFPClan
+        for clan in self.clans():
+            found = True
+            if clan_id and clan_id != clan.id:
+                found = False
+            if clan_name and clan_name != clan.name:
+                found = False
+            if admin_id and admin_id != clan.admin_id:
+                found = False
+            if member_id:
+                found_member = False
+                for member in clan.members():
+                    if member.id == member_id:
+                        found_member = True
+                found = found_member
+            if found:
+                found_clans.append(clan)
+
+        if ordered_by == "name":
+            found_clans.sort(key=lambda x: x.name)
+
+        return found_clans
+
+
+class TGFPClan:
+    """ Wrapper class for the 'clan' collection """
+    def __init__(self, tgfp, data):
+        self._tgfp: TGFP = tgfp
+        if data.get('_id'):
+            self._id = data.get('_id')
+        self.name = data['name']
+        self.group = data['group']
+        self.admin_id = data['admin_id']
+        self.is_drafting = data['is_drafting']
+        self.member_ids: List[ObjectId] = data['member_ids']
+        self._members: List[TGFPPlayer] = []
+
+    def mongo_data(self):
+        filtered_dict = {}
+        for key, value in self.__dict__.items():
+            if not key.startswith('_'):
+                filtered_dict.update({key: value})
+
+        return filtered_dict
+
+    def save(self):
+        self._tgfp.mongodb.clans.update_one(
+            {
+                "name": self.name
+            },
+            {"$set": self.mongo_data()},
+            upsert=True
+        )
+
+    def members(self) -> List[TGFPPlayer]:
+        if not self._members:
+            for member in self.member_ids:
+                self._members.append(self._tgfp.find_players(player_id=member)[0])
+        return self._members
+
+    def add_member(self, member_id: ObjectId):
+        """ Adds a member and saves it to the DB """
+        self.member_ids.append(member_id)
+        self.save()
+
+    @property
+    def id(self) -> ObjectId:
+        return self._id
 
 
 class TGFPTeam:
@@ -332,7 +438,6 @@ class TGFPTeam:
 
     @property
     def id(self):
-        # pylint: disable=invalid-name
         return self._id
 
 
@@ -465,6 +570,8 @@ class TGFPGame:
             if '_id' in data:
                 self._id = data['_id']
             # below are mandatory fields in the DB
+            if data.get('favorite_team_id') is None:
+                print("YIKES")
             self.favorite_team_id = data['favorite_team_id']
             self.game_status = data['game_status']
             self.home_team_id = data['home_team_id']

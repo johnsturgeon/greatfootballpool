@@ -1,0 +1,15 @@
+{% extends "base.j2" -%}
+{% set page_title="Profile" -%}
+{% set page_description="Profile page - use this page to manage your profile" -%}
+{% block content -%}
+    List of clans here
+    <ul>
+        <li>Clan</li>
+    </ul>
+    <form method="POST" action="{{ url_for('create_clan') }}">
+        {{ form.csrf_token }}
+        {{ form.clan.label }} {{ form.clan(size=20) }}
+        <br />
+        <input type="submit" value="Go">
+    </form>
+{% endblock -%}

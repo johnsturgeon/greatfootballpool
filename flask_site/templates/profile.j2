@@ -1,0 +1,7 @@
+{% extends "base.j2" -%}
+{% set page_title="Profile" -%}
+{% set page_description="Profile page - use this page to manage your profile" -%}
+{% block content -%}
+    <a href="{{ url_for('manage_clan') }}">Manage your clans</a><br />
+    <a href="{{ url_for('join_clan') }}">Join a Clan</a>
+{% endblock -%}

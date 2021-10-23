@@ -1,0 +1,26 @@
+{% extends "base.j2" -%}
+{% set page_title="Clan Draft" -%}
+{% set page_description="Clan Draft Page - who is drafting, what are the teams" -%}
+{% block content -%}
+    <div id="draft_intro">Welcome to the clan draft page, check out how the draft is going, and how the teams are shaping up.</div>
+    <div id="draft_on_the_clock">On the Clock: {{ drafting_clan.name }}</div>
+    <div id="draft_board">
+        <div id="undrafted">
+            <div id="undrafted_header">Undrafted</div>
+            {% for player in undrafted_players %}
+                <div><a href="{{ url_for('draft_player', player_id=player.id, drafting_clan_id=drafting_clan.id) }}">Select</a></div>
+                <div>{{ player.full_name() }}</div>
+                <div>{{ player.total_points() }}</div>
+            {% endfor %}
+        </div>
+        <div id="current_team">
+            <div id="current_team_header">{{ drafting_clan.name }}</div>
+            {% for player in drafting_clan.members() %}
+                <div>{{ player.full_name() }}</div>
+            {% endfor %}
+        </div>
+        <div id="other_team_1">Team 1</div>
+        <div id="other_team_2">Team 2</div>
+    </div> <!-- draft_board -->
+
+{% endblock -%}
