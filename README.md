@@ -1,6 +1,6 @@
 # Great Football Pool
 ## Quick overview of the technology of the new website
-This is a Python/Flask web site that is for running a friendly 'pick the winner' style football pool.  I find the python language easier to use, and the flask framework is extremely easy to understand and develop with.
+This is a Python/Flask website that is for running a friendly 'pick the winner' style football pool.  I find the python language easier to use, and the flask framework is extremely easy to understand and develop with.
 
 
 # TGFP Readme

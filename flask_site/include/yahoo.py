@@ -39,12 +39,11 @@ class Yahoo:
             # schedState matches the url variable
             schedule_state = 2
             # if we're in the playoffs, we need to bump the schedState variable to 3
+            week_no = self.week_no
             if self.week_no > 18:
                 schedule_state = 3
-            url_to_query = 'https://sports.yahoo.com/nfl/scoreboard/?dateRange=%(week_no)d&' +\
-                'dateRangeDisplay=%(week_no)d&schedState=%(schedState)d' % {
-                    'week_no': self.week_no, 'schedState': schedule_state
-                }
+            url_to_query = f'https://sports.yahoo.com/nfl/scoreboard/?dateRange={week_no}&'
+            url_to_query += f'dateRangeDisplay={week_no}&schedState={schedule_state}'
             req = Request(url_to_query, headers=all_headers)
             # pylint: disable=consider-using-with
             raw_game_data = urlopen(req).read().decode('utf-8')
