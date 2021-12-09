@@ -14,7 +14,7 @@ def main():
     """ Backs up the mongo db """
     try:
         output = check_output([
-            '/usr/local/bin/mongodump',
+            config.MONGODUMP_BIN,
             '-h', config.MONGO_HOST,
             '-u', config.MONGO_USERNAME,
             '-p', config.MONGO_PASSWORD,
