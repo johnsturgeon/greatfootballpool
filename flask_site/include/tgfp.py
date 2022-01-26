@@ -29,7 +29,7 @@ class TGFP:
     Main class for the great football pool
     """
 
-    PRO_BOWL_WEEK = 21
+    PRO_BOWL_WEEK = 22
 
     def __init__(self):
         self.configuration = get_config(os.getenv('FLASK_ENV'))

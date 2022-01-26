@@ -1,6 +1,8 @@
 """ Updates the win/loss record for all the players in TGFP """
+from typing import List
+
 from include.yahoo import Yahoo
-from include.tgfp import TGFP
+from include.tgfp import TGFP, TGFPPick
 
 
 def main():
@@ -13,7 +15,7 @@ def main():
 
     for player in active_players:
         print("Working on %s" % player.nick_name)
-        picks = tgfp.find_picks(player_id=player.id)
+        picks: List[TGFPPick] = tgfp.find_picks(player_id=player.id)
         total_wins = 0
         total_losses = 0
         total_bonus = 0
@@ -21,11 +23,17 @@ def main():
         total_last_losses = 0
         total_last_bonus = 0
         for pick in picks:
-            pick.load_record()
+            if player.nick_name == "Austin" and pick.week_no == 1 and pick.season == 2021:
+                pick.wins = 10
+                pick.losses = 6
+                pick.bonus = 0
+            else:
+                pick.load_record()
             pick.save()
             total_wins += pick.wins
             total_losses += pick.losses
             total_bonus += pick.bonus
+
             if pick.week_no == last_week:
                 total_last_wins += pick.wins
                 total_last_losses += pick.losses
