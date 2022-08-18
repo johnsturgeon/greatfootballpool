@@ -11,11 +11,9 @@ games_data.json
 .DS_Store
 env
 logs
-flask_site/instance/config.py
 conf/.env
 conf/settings.json
 conf/prod.settings.json
 conf/dev.settings.json
 .nova
 .idea
-

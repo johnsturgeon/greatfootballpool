@@ -8,32 +8,26 @@ from flask import render_template, redirect, url_for, g
 from flask_discord import DiscordOAuth2Session
 from sentry_sdk.integrations.flask import FlaskIntegration
 from bson import ObjectId
-from include.tgfp import TGFP, TGFPPick, TGFPPlayer
-# pylint: disable=no-name-in-module
-# pylint: disable=import-error
-from instance.config import get_config
 
-flask_env = os.getenv('FLASK_ENV')
-config = get_config(flask_env)
+from tgfp_lib import TGFP, TGFPPlayer, TGFPPick
+
+from config import get_config
+
+config = get_config()
 logger = config.logger(os.path.basename(__file__))
-
 # timeout in seconds * minutes
 seconds_in_one_day: int = 60*60*24
 days_for_timeout: int = 14
 COOKIE_TIME_OUT = days_for_timeout * seconds_in_one_day
 
-DEBUG = flask_env.lower() != 'production'
-
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 app.config.from_object(config)
-os.environ['DISCORD_REDIRECT_URI'] = config.DISCORD_REDIRECT_URI
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = config.OAUTHLIB_INSECURE_TRANSPORT
 discord = DiscordOAuth2Session(app)
 
 # pylint: disable=abstract-class-instantiated
 sentry_sdk.init(
-    dsn=os.getenv('SENTRY_DSN'),
+    dsn=config.SENTRY_DSN,
     integrations=[FlaskIntegration()],
     traces_sample_rate=0.0
 )
@@ -351,7 +345,7 @@ def clear_player_from_session():
 
 
 def get_player_from_session() -> Optional[TGFPPlayer]:
-    """ Instantiate a player from existing session data Return None if can't be found """
+    """ Instantiate a player from existing session data Return None if player can't be found """
     if session.get('player_email'):
         return get_player_by_email(session.get('player_email'))
     return None
@@ -390,3 +384,7 @@ def get_player_by_email(email: str) -> Optional[TGFPPlayer]:
     if len(players) == 1:
         return players[0]
     return None
+
+
+if __name__ == '__main__':
+    app.run()

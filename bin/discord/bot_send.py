@@ -1,11 +1,10 @@
 """Discord bot runs in the background and handles all requests to discord."""
-import os
 import discord
 # pylint: disable=import-error
 # pylint: disable=no-name-in-module
-from instance.config import get_config
+from config import get_config
 
-config = get_config(os.getenv('FLASK_ENV'))
+config = get_config()
 
 
 def send_message(message):
