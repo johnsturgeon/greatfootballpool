@@ -4,6 +4,15 @@ Welcome to the Great Football Pool changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.93.2] - 2022-01-26
+### Fixed
+- Tagged for deployment
+
+## [0.93.1] - 2022-01-26
+### Fixed
+- Fixed an issue where Austin's picks were wrong for week 1 season 2021
+- Fixed the pro bowl weekend date (now that the season is 17 games long)
+
 ## [0.92.1] - 2021-12-09
 ### Added
 - Added scripts for updating and creating picks page.  Not quite sure why they went away
