@@ -13,6 +13,7 @@ from tgfp_lib import TGFP, TGFPPlayer, TGFPPick
 
 from config import get_config
 
+
 config = get_config()
 logger = config.logger(os.path.basename(__file__))
 # timeout in seconds * minutes
@@ -178,7 +179,7 @@ def picks_form():
     pick_detail = []
     for game in games:
         print("Game")
-        key = "game_%s" % game.id
+        key = f"game_{game.id}"
         if key in request.form:
             winner_id = request.form[key]
             print("winner_id " + winner_id)

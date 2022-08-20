@@ -13,4 +13,4 @@ runs:
       shell: bash
       run: |
         # lint the module, and the tests
-        pylint --rcfile=.pylintrc bin flask_site
+        pylint --rcfile=.pylintrc flask_site
