@@ -12,8 +12,6 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates cur
     apt-get update && \
     apt-get -y install doppler
 
-CMD ["doppler", "run", "--", "echo FLASK_DEBUG=\$FLASK_DEBUG"]
-
 COPY . /app
 
-CMD ["gunicorn", "--chdir", "flask_site", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["doppler", "run", "--", "gunicorn --chdir flask_site -b 0.0.0.0:80 app:app"]
