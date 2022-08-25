@@ -18,3 +18,4 @@ conf/dev.settings.json
 .nova
 .idea
 docker-compose.yaml
+./data
