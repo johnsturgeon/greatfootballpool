@@ -3,8 +3,12 @@ FROM python:3.10
 RUN mkdir /app
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir --upgrade -r requirements.txt && rm requirements.txt
+COPY pyproject.toml /app
+ENV PYTHONPATH=${PYTHONPATH}:${PWD}
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev
+#RUN pip install --no-cache-dir --upgrade -r requirements.txt && rm requirements.txt
 # Install Doppler CLI
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg && \
     curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | apt-key add - && \
