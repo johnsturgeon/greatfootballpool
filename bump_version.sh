@@ -1,5 +1,5 @@
 #!/bin/bash
-# usage: [major, minor, patch]
+# usage: [major, minor, patch] "commit message"
 poetry version $1
 git add .
 git commit -m "$2"
