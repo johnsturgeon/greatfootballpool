@@ -11,7 +11,7 @@ from bson import ObjectId
 
 from tgfp_lib import TGFP, TGFPPlayer, TGFPPick
 
-from .config import get_config
+from config import get_config
 
 
 config = get_config()
