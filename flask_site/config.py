@@ -33,6 +33,8 @@ class Config:
     SENTRY_DSN = os.getenv("SENTRY_DSN")
     TGFP_WEB_CHECK_URL = os.getenv("TGFP_WEB_CHECK_URL")
 
+    DOPPLER_ENVIRONMENT = os.getenv("DOPPLER_ENVIRONMENT")
+
     def logger(self, name: str) -> logging.Logger:
         """ Return the common logger """
         logger: logging.Logger = logging.getLogger(name)

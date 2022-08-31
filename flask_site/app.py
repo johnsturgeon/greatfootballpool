@@ -5,9 +5,9 @@ from typing import List, Optional
 import sentry_sdk
 from flask import Flask, session, request, abort
 from flask import render_template, redirect, url_for, g
+from flask_debugtoolbar import DebugToolbarExtension
 from flask_discord import DiscordOAuth2Session
 from sentry_sdk.integrations.flask import FlaskIntegration
-from bson import ObjectId
 
 from tgfp_lib import TGFP, TGFPPlayer, TGFPPick
 
@@ -23,6 +23,7 @@ COOKIE_TIME_OUT = days_for_timeout * seconds_in_one_day
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+toolbar = DebugToolbarExtension(app)
 app.config.from_object(config)
 discord = DiscordOAuth2Session(app)
 
@@ -185,7 +186,7 @@ def picks_form():
             print("winner_id " + winner_id)
             item = {
                 "game_id": game.id,
-                "winner_id": ObjectId(winner_id)
+                "winner_id": TGFP.object_id_from_string(winner_id)
             }
             pick_detail.append(item)
 
@@ -203,9 +204,9 @@ def picks_form():
 
     player_pick.player_id = player.id
     player_pick.week_no = int(week_no)
-    player_pick.lock_team_id = ObjectId(lock_id)
+    player_pick.lock_team_id = TGFP.object_id_from_string(lock_id)
     if upset_id:
-        player_pick.upset_team_id = ObjectId(upset_id)
+        player_pick.upset_team_id = TGFP.object_id_from_string(upset_id)
     else:
         player_pick.upset_team_id = None
 
@@ -315,7 +316,7 @@ def get_error_messages(pick_detail, games, upset_id, lock_id):
         errors.append("You missed your lock.  (You must choose a lock)")
     for game in games:
         if upset_id:
-            if game.favorite_team_id == ObjectId(upset_id):
+            if game.favorite_team_id == TGFP.object_id_from_string(upset_id):
                 errors.append("You cannot pick a favorite as your upset")
     if upset_id:
         pick_is_ok = False

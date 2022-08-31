@@ -2,6 +2,7 @@
   <configuration default="false" name="Flask App Dev (5001)" type="Python.FlaskServer">
     <option name="additionalOptions" value="--port 5001" />
     <option name="flaskDebug" value="true" />
+    <option name="flaskEnv" />
     <module name="greatfootballpool" />
     <option name="target" value="$PROJECT_DIR$/flask_site/app.py" />
     <option name="targetType" value="PATH" />
@@ -11,7 +12,7 @@
       <env name="DOPPLER_ENV" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/flask_site" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
