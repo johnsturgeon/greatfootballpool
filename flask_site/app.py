@@ -9,7 +9,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_discord import DiscordOAuth2Session
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from tgfp_lib import TGFP, TGFPPlayer, TGFPPick
+from tgfp_lib import TGFP, TGFPPlayer, TGFPPick, TGFPGame
 
 from config import get_config
 
@@ -134,8 +134,9 @@ def picks():
     games = tgfp.find_games(week_no=g.current_week, ordered_by='start_time')
     valid_games = []
     started_games = []
+    game: TGFPGame
     for game in games:
-        if game.game_status == 'pregame':
+        if game.is_pregame():
             valid_games.append(game)
         else:
             started_games.append(game)

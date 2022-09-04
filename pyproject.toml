@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "greatfootballpool"
-version = "1.2.0"
+version = "1.2.1"
 description = "The Great Football Pool flask web site"
 authors = ["John Sturgeon <john.sturgeon@me.com>"]
 license = "MIT"
@@ -14,7 +14,7 @@ Flask-Discord = "^0.1.69"
 blinker = "^1.5"
 doppler-env = "^0.3.0"
 Flask-DebugToolbar = "^0.13.1"
-tgfp-lib = "^1.4.0"
+tgfp-lib = "^1.5.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.15.0"
