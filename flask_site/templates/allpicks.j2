@@ -22,8 +22,8 @@
     {% endif %}
     <span {% if span_class -%} class="{{ span_class }}"{% endif -%}>{{ team.long_name }}</span>
 {% endmacro -%}
-{% macro score(game_status, points) %}
-{% if game_status != 'pregame' %}
+{% macro score(is_pregame, points) %}
+{% if not is_pregame %}
 ({{points}})
 {% endif %}
 {% endmacro %}
@@ -38,7 +38,7 @@
         {% set road_team=tgfp.find_teams(game.road_team_id)[0] -%}
         {% set home_team=tgfp.find_teams(game.home_team_id)[0] -%}
             {% set opacity=1 %}
-            {% if game.score_is_final %}
+            {% if game.is_final %}
                 {% if  week_no == g.current_week %}
                     {% set opacity=0.5 %}
                 {% else %}
@@ -46,9 +46,9 @@
                 {% endif %}
             {% endif %}
             <td style="opacity:{{ opacity }};text-align:center;border-top:solid 1px #888;border-left:solid 1px #888;">
-                <img align="absmiddle" src="{{ url_for('static', filename='images/' + road_team.short_name + '.small.gif') }}" border="0">{{ score(game.game_status, game.road_team_score) }}
+                <img align="absmiddle" src="{{ url_for('static', filename='images/' + road_team.short_name + '.small.gif') }}" border="0">{{ score(game.is_pregame, game.road_team_score) }}
                 <div>at</div>
-                <img align="absmiddle" src="{{ url_for('static', filename='images/' + home_team.short_name + '.small.gif') }}" border="0">{{ score(game.game_status, game.home_team_score) }}
+                <img align="absmiddle" src="{{ url_for('static', filename='images/' + home_team.short_name + '.small.gif') }}" border="0">{{ score(game.is_pregame, game.home_team_score) }}
             </td>
     {% endfor -%}
     </tr>
@@ -68,7 +68,6 @@
                 <td style="text-align:center;border-top:solid 1px #888;border-left:solid 1px #888;">{{ win_loss_icon(team,player_pick) }}{{ team_with_upset_lock_style(team, player_pick, win_team_id) }}</td>
             {% endif %}
         {% endfor %}
-        </tr>
     {% endfor -%}
  </table>
 {% endblock %}

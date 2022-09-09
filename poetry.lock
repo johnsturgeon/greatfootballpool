@@ -417,7 +417,7 @@ testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (
 
 [[package]]
 name = "tgfp-lib"
-version = "1.6.0"
+version = "1.8.0"
 description = "The Great Football Pool Project"
 category = "main"
 optional = false
@@ -481,7 +481,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "b7b69e5a71ac3a08d59a6fa5175e7da55be9329c85cf93d240f636b09cbf9180"
+content-hash = "e849fcb6e2c08436b2695abc10f6768795fdae0cd4052b134874d51cc568d26f"
 
 [metadata.files]
 astroid = [
@@ -658,6 +658,7 @@ pylint = [
     {file = "pylint-2.15.0.tar.gz", hash = "sha256:4f3f7e869646b0bd63b3dfb79f3c0f28fc3d2d923ea220d52620fd625aed92b0"},
 ]
 pymongo = [
+    {file = "pymongo-4.2.0-cp310-cp310-macosx_10_15_universal2.whl", hash = "sha256:b9e4981a65f8500a3a46bb3a1e81b9feb45cf0b2115ad9c4f8d517326d026940"},
     {file = "pymongo-4.2.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:1c81414b706627f15e921e29ae2403aab52e33e36ed92ed989c602888d7c3b90"},
     {file = "pymongo-4.2.0-cp310-cp310-manylinux1_i686.whl", hash = "sha256:c549bb519456ee230e92f415c5b4d962094caac0fdbcc4ed22b576f66169764e"},
     {file = "pymongo-4.2.0-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:70216ec4c248213ae95ea499b6314c385ce01a5946c448fb22f6c8395806e740"},
@@ -750,8 +751,8 @@ setuptools = [
     {file = "setuptools-65.3.0.tar.gz", hash = "sha256:7732871f4f7fa58fb6bdcaeadb0161b2bd046c85905dbaa066bdcbcc81953b57"},
 ]
 tgfp-lib = [
-    {file = "tgfp-lib-1.6.0.tar.gz", hash = "sha256:5717d1727322b72e82e0b3d7f4b2fe2d5aa92c5fa58d015225c7ff2f5eced1f1"},
-    {file = "tgfp_lib-1.6.0-py3-none-any.whl", hash = "sha256:ef7378f183474aee2ce29381cd364f94c0c6e1df4eaec166934001eff6a74c25"},
+    {file = "tgfp-lib-1.8.0.tar.gz", hash = "sha256:9dbec2132d364a47be980af042df8a434acc09fcb2c046cc67465b5d3229cd2e"},
+    {file = "tgfp_lib-1.8.0-py3-none-any.whl", hash = "sha256:fad66b037fdfb1dc2f9ddb932973241527dc29f0bdbf3b1630518b9559f39ec4"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},

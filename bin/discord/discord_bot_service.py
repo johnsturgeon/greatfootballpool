@@ -41,8 +41,8 @@ def game_line_for_game(tgfp_game: TGFPGame, player_pick: TGFPPick):
     road_team = tgfp.find_teams(tgfp_game.road_team_id)[0]
     home_team = tgfp.find_teams(tgfp_game.home_team_id)[0]
     player_win_team = tgfp.find_teams(player_pick.winner_for_game_id(tgfp_game.id))[0]
-    final = tgfp_game.game_status == 'final'
-    if tgfp_game.game_status != 'pregame':
+    final = tgfp_game.is_final
+    if tgfp_game.is_pregame:
         if tgfp_game.leader_id_of_game is None:
             winning_team = '---'
             icon = '🟠'
