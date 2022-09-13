@@ -5,7 +5,7 @@ from typing import List, Optional
 import sentry_sdk
 from flask import Flask, session, request, abort
 from flask import render_template, redirect, url_for, g
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from flask_discord import DiscordOAuth2Session
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -23,7 +23,7 @@ COOKIE_TIME_OUT = days_for_timeout * seconds_in_one_day
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 app.config.from_object(config)
 discord = DiscordOAuth2Session(app)
 
@@ -260,6 +260,19 @@ def standings():
     return render_template(
         'standings.j2',
         active_players=active_players)
+
+
+@app.route('/clan_standings')
+def clan_standings():
+    """ route for the 'standings' page """
+    if 'player_name' not in session:
+        session['login_status'] = 'not logged in'
+        return redirect(url_for('login'))
+
+    clans = g.tgfp.clans(ordered_by='total_points', reverse_order=True)
+    return render_template(
+        'clan_standings.j2',
+        clans=clans)
 
 
 # pylint: disable=missing-function-docstring
