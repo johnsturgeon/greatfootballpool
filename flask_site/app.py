@@ -136,7 +136,7 @@ def picks():
     started_games = []
     game: TGFPGame
     for game in games:
-        if game.is_pregame():
+        if game.is_pregame:
             valid_games.append(game)
         else:
             started_games.append(game)

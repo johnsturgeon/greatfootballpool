@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "greatfootballpool"
-version = "1.3.0"
+version = "1.4.0"
 description = "The Great Football Pool flask web site"
 authors = ["John Sturgeon <john.sturgeon@me.com>"]
 license = "MIT"
