@@ -422,7 +422,9 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
+blinker = {version = ">=1.1", optional = true, markers = "extra == \"flask\""}
 certifi = "*"
+flask = {version = ">=0.11", optional = true, markers = "extra == \"flask\""}
 urllib3 = {version = ">=1.26.11", markers = "python_version >= \"3.6\""}
 
 [package.extras]
@@ -540,7 +542,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f0325074b506256e41f3bafe215e72def404d240929e3263da413c2ac1c417df"
+content-hash = "c6ce39b3e1c7ef03ea3b268bb89d7d7161e2d7c47977f12f928b712a87a08eea"
 
 [metadata.files]
 astroid = [

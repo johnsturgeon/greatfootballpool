@@ -30,7 +30,7 @@ class Config:
     MONGO_BACKUP_FOLDER = os.getenv("MONGO_BACKUP_FOLDER")
 
     SECRET_KEY = os.getenv("SECRET_KEY")
-    SENTRY_DSN = os.getenv("SENTRY_DSN")
+    SENTRY_DSN_TGFP_WEB = os.getenv("SENTRY_DSN_TGFP_WEB")
     TGFP_WEB_CHECK_URL = os.getenv("TGFP_WEB_CHECK_URL")
 
     DOPPLER_ENVIRONMENT = os.getenv("DOPPLER_ENVIRONMENT")
