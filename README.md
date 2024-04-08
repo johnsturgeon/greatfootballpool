@@ -1,6 +1,7 @@
-# Great Football Pool
+# Great Football Pool [DEPRECATED]
 
 ## Notes during massive refactor
+This was my 'old' football pool, but it has been replaced by a new one, which all repos are gathered up under the org https://github.com/orgs/TheGreatFootballPool/repositories
 
 ### Uses the following
 - Install docker
